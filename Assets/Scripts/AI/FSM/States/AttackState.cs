@@ -1,5 +1,3 @@
-using static UnityEngine.UI.GridLayoutGroup;
-
 public class AttackState : CharacterState {
     public override CharacterStateType StateType => CharacterStateType.Attack;
     public AttackState(CharacterBrain brain) : base(brain) { }
