@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30aef8e631601b8489c1f90a6161caff, type: 3}
   m_Name: EnemyConfig
   m_EditorClassIdentifier: Assembly-CSharp::CharacterConfig
+  _teamType: 1
   _maxHP: 110
   _damage: 14
   _moveSpeed: 5.2

@@ -18,13 +18,13 @@ public class CharacterAIController {
         _stateMachine.SetState(CharacterStateType.Idle);
     }
 
-    public void Tick(CharacterBrain[] targets) {
+    public void Tick() {
         if (_brain.Runtime.IsDead.CurrentValue) {
             _stateMachine.SetState(CharacterStateType.Dead);
             return;
         }
         
-        CharacterBrain target = _detectionService.FindClosestTarget(_brain, targets);
+        CharacterBrain target = _detectionService.FindClosestTarget(_brain);
         _brain.TargetComponent.SetTarget(target);
         
         if(target == null) {

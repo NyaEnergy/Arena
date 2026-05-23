@@ -2,6 +2,7 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Configs/Units/Character Config", fileName = "CharacterConfig")]
 public class CharacterConfig : ScriptableObject {
+    [SerializeField] private TeamType _teamType;
     [SerializeField] private float _maxHP = 125f;
     [SerializeField] private float _damage = 18f;
     [SerializeField] private float _moveSpeed = 4.2f;
@@ -12,6 +13,7 @@ public class CharacterConfig : ScriptableObject {
     [SerializeField] private float _critChance = 0.12f;
     [SerializeField] private float _critMultiplier = 1.7f;
 
+    public TeamType TeamType => _teamType;
     public float MaxHP => _maxHP;
     public float Damage => _damage;
     public float MoveSpeed => _moveSpeed;
