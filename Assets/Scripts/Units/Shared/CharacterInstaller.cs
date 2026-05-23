@@ -9,6 +9,10 @@ public class CharacterInstaller : MonoBehaviour {
     public CharacterBrain Brain => _brain;
 
     private void Awake() {
+        CreateBrain();
+    }
+
+    public void CreateBrain() {
         _brain = new CharacterBrain(_view, _config);
     }
 }

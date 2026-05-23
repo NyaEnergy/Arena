@@ -10,13 +10,15 @@ public class CharacterView : MonoBehaviour {
     public NavMeshAgent Agent => _agent;
     public CapsuleCollider CapsuleCollider => _capsuleCollider;
 
-    public void PlayAttack() {
-        if (_animator == null) return;
-        _animator.SetTrigger("Attack");
+    public void Enable() {
+        gameObject.SetActive(true);
+        _agent.enabled = true;
+        _capsuleCollider.enabled = true;
     }
 
-    public void PlayDeath() {
-        if (_animator == null) return;
-        _animator.SetTrigger("Death");
+    public void Disable() {
+        _agent.enabled = false;
+        _capsuleCollider.enabled = false;
+        gameObject.SetActive(false);
     }
 }

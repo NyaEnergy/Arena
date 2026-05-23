@@ -79,6 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattlefieldCharacter
   _installer: {fileID: 8234579875711895182}
+  _characterType: 0
 --- !u!195 &8101784571116791004
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -226,7 +227,7 @@ Animator:
   m_GameObject: {fileID: 8885517846123830964}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 91678bf62057c854cbae735d67428f11, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
