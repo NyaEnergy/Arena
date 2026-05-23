@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2071216601514908258}
   - component: {fileID: 6211699762213598990}
+  - component: {fileID: 8234579875711895182}
   - component: {fileID: 8101784571116791004}
   m_Layer: 0
   m_Name: Enemy_Base
@@ -50,6 +51,20 @@ MonoBehaviour:
   _agent: {fileID: 8101784571116791004}
   _capsuleCollider: {fileID: 932120619703133116}
   _bodyRenderer: {fileID: 1768789401924862647}
+--- !u!114 &8234579875711895182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8502374001429732265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1400c39c842f8c54682b844ca8db122f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterInstaller
+  _view: {fileID: 6211699762213598990}
+  _config: {fileID: 11400000, guid: d07516d43ed56a841901481ca3d73093, type: 2}
 --- !u!195 &8101784571116791004
 NavMeshAgent:
   m_ObjectHideFlags: 0
