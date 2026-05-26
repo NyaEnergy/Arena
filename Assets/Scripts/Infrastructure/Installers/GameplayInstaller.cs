@@ -6,5 +6,6 @@ public class GameplayInstaller : MonoInstaller {
         Container.Bind<CharacterPool>().AsSingle();
         Container.Bind<CharacterFactory>().AsSingle();
         Container.Bind<DetectionService>().AsSingle();
+        Container.Bind<PressureService>().AsSingle();
     }
 }
