@@ -1,21 +1,9 @@
 using UnityEngine;
-using Zenject;
 
 public class CharacterSpawnerInstaller : MonoBehaviour {
-    [SerializeField] private CharacterSpawner _characterSpawner;
+    [SerializeField] private Transform _allySpawnPoint;
+    [SerializeField] private Transform _enemySpawnPoint;
 
-    private CharacterFactory _characterFactory;
-    private CharacterPool _characterPool;
-
-    [Inject]
-    private void Consruct(
-        CharacterFactory characterFactory,
-        CharacterPool characterPool) {
-        _characterFactory = characterFactory;
-        _characterPool = characterPool;
-    }
-
-    private void Awake() {
-        _characterSpawner.Initialize(_characterFactory, _characterPool);
-    }
+    public Transform AllySpawnPoint => _allySpawnPoint;
+    public Transform EnemySpawnPoint => _enemySpawnPoint;
 }

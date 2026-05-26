@@ -4,39 +4,54 @@ using Zenject;
 
 public class CharacterPool {
     private readonly DiContainer _container;
-    private readonly Dictionary<CharacterType, Queue<BattlefieldCharacter>> _pools = new();
-    private readonly Dictionary<CharacterType, BattlefieldCharacter> _prefabs = new();
+    private readonly CharacterConfigRegistry _configRegistry;
 
-    public CharacterPool(DiContainer container) {
+    private readonly Dictionary<CharacterKey, Queue<BattlefieldCharacter>> _pools = new();
+
+    public CharacterPool(DiContainer container,
+                         CharacterConfigRegistry configRegistry) {
         _container = container;
+        _configRegistry = configRegistry;
     }
 
-    public void Initialize(CharacterType characterType, BattlefieldCharacter prefab, int preloadCount) {
-        if (_pools.ContainsKey(characterType)) return;
-        _prefabs.Add(characterType, prefab);
-        _pools.Add(characterType, new Queue<BattlefieldCharacter>());
-        Queue<BattlefieldCharacter> pool = _pools[characterType];
-        for(int i = 0; i < preloadCount; ++i) {
-            BattlefieldCharacter character = CreateInstance(characterType);
-            Return(characterType, character);
+    public void Warmup(CharacterKey key,
+                       int preloadCount) {
+        if (_pools.ContainsKey(key)) return;
+
+        Queue<BattlefieldCharacter> pool = new();
+
+        _pools.Add(key, pool);
+
+        for (int i = 0; i < preloadCount; i++) {
+            BattlefieldCharacter character = CreateInstance(key);
+            Return(key, character);
         }
     }
 
-    public BattlefieldCharacter Get(CharacterType characterType, Vector3 position) {
-        Queue<BattlefieldCharacter> pool = _pools[characterType];
-        BattlefieldCharacter character = pool.Count > 0 ? pool.Dequeue() : CreateInstance(characterType);
+    public BattlefieldCharacter Get(CharacterKey key,
+                                    Vector3 position) {
+        if (!_pools.ContainsKey(key))
+            Warmup(key, 4);
+
+        BattlefieldCharacter character =
+            _pools[key].Count > 0 ?
+            _pools[key].Dequeue() :
+            CreateInstance(key);
+
         character.transform.position = position;
         character.OnSpawned();
         return character;
     }
 
-    public void Return(CharacterType characterType, BattlefieldCharacter character) {
+    public void Return(CharacterKey key,
+                       BattlefieldCharacter character) {
         character.OnDespawned();
-        _pools[characterType].Enqueue(character);
+        _pools[key].Enqueue(character);
     }
 
-    private BattlefieldCharacter CreateInstance(CharacterType characterType) {
-        BattlefieldCharacter prefab = _prefabs[characterType];
-        return _container.InstantiatePrefabForComponent<BattlefieldCharacter>(prefab);
+    private BattlefieldCharacter CreateInstance(CharacterKey key) {
+        CharacterConfig config = _configRegistry.Get(key);
+        BattlefieldCharacter character =_container.InstantiatePrefabForComponent<BattlefieldCharacter>(config.Prefab);
+        return character;
     }
 }

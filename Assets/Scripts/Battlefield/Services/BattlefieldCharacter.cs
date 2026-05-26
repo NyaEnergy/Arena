@@ -3,15 +3,13 @@ using Zenject;
 
 public class BattlefieldCharacter : MonoBehaviour, IPoolableObject {
     [SerializeField] private CharacterInstaller _installer;
-    [SerializeField] private CharacterType _characterType;
 
     private BattlefieldRegistry _battlefieldRegistry;
     private DetectionService _detectionService;
+    private CharacterKey _characterKey;
     private CharacterPool _characterPool;
 
     private CharacterAIController _aiController;
-
-    public CharacterType CharacterType => _characterType;
 
     [Inject]
     private void Construct(
@@ -25,10 +23,14 @@ public class BattlefieldCharacter : MonoBehaviour, IPoolableObject {
 
     private void Update() {
         if (_installer.Brain.Runtime.IsDead.CurrentValue) {
-            _characterPool.Return(_characterType, this);
+            _characterPool.Return(_characterKey, this);
             return;
         }
         _aiController.Tick();
+    }
+
+    public void Initialize(CharacterKey characterKey) {
+        _characterKey = characterKey;
     }
 
     public void OnSpawned() {

@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30aef8e631601b8489c1f90a6161caff, type: 3}
   m_Name: AllyConfig
   m_EditorClassIdentifier: Assembly-CSharp::CharacterConfig
+  _prefab: {fileID: 8407102288199615623, guid: 2ec2fd804681c734bb0f7f8b282613f5, type: 3}
+  _teamType: 0
+  _characterType: 0
   _maxHP: 220
   _damage: 24
   _moveSpeed: 4
