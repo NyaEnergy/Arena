@@ -3,7 +3,6 @@ using Zenject;
 
 public class EnemyConveyorInstaller : MonoInstaller {
     [SerializeField] private EnemyConveyorConfig _config;
-    [SerializeField] private EnemyConveyorView _view;
 
     public override void InstallBindings() {
         Container.Bind<EnemyConveyorRuntime>().AsSingle();
@@ -12,8 +11,5 @@ public class EnemyConveyorInstaller : MonoInstaller {
 
         Container.BindInterfacesTo<EnemyDirectorService>().AsSingle();
         Container.BindInterfacesTo<EnemyConveyorService>().AsSingle();
-
-        Container.Bind<EnemyConveyorView>().FromInstance(_view).AsCached();
-        Container.BindInterfacesTo<EnemyConveyorPresenter>().AsSingle();
     }
 }
