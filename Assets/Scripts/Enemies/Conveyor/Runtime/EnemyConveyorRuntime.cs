@@ -1,25 +1,29 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class EnemyConveyorRuntime {
-    private readonly List<EnemySpawnRequest> _queue = new();
+    private readonly List<EnemyConveyorSlot> _slots = new();
 
-    public IReadOnlyList<EnemySpawnRequest> Queue => _queue;
+    public IReadOnlyList<EnemyConveyorSlot> Slots => _slots;
+    public int Count => _slots.Count;
 
-    public void Add(EnemySpawnRequest request) {
-        _queue.Add(request);
+    public void Initialize(Vector3 startPosition, float spacing) {
+        _slots.Clear();
+        AddInitialSlot(startPosition);
     }
 
-    public EnemySpawnRequest PopFront() {
-        EnemySpawnRequest request = _queue[0];
-        _queue.RemoveAt(0);
-        return request;
+    public EnemyConveyorSlot AddSlot(Vector3 position) {
+        var slot = new EnemyConveyorSlot(position);
+        _slots.Add(slot);
+        return slot;
     }
 
-    public bool IsFull(int maxCount) {
-        return _queue.Count >= maxCount;
+    public EnemyConveyorSlot GetSlot(int index) {
+        return _slots[index];
     }
 
-    public bool HasEnemies() {
-        return _queue.Count > 0;
+    private void AddInitialSlot(Vector3 startPosition) {
+        _slots.Add(new EnemyConveyorSlot(startPosition));
     }
 }

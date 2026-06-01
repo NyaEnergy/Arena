@@ -1,33 +1,57 @@
+using UnityEngine;
 using Zenject;
 
 public class EnemyDirectorService : ITickable {
     private readonly EnemyConveyorRuntime _runtime;
     private readonly EnemyConveyorConfig _config;
+    private readonly EnemyPlatformPool _platformPool;
+    private readonly CharacterPool _characterPool;
 
-    private float _spawnTimer;
+    private float _timer;
+
+    private Vector3 _startPosition = Vector3.zero;
+    private float _spacing = 2.2f;
 
     public EnemyDirectorService(EnemyConveyorRuntime runtime,
-                                EnemyConveyorConfig config) {
+                                EnemyConveyorConfig config,
+                                EnemyPlatformPool platformPool,
+                                CharacterPool characterPool) {
         _runtime = runtime;
         _config = config;
+        _platformPool = platformPool;
+        _characterPool = characterPool;
+
+        _runtime.Initialize(_startPosition, _spacing);
+
+        SpawnSlot(0);
     }
 
     public void Tick() {
-        _spawnTimer += UnityEngine.Time.deltaTime;
+        _timer += Time.deltaTime;
 
-        if (_spawnTimer < _config.DirectorSpawnInterval) return;
+        if (_timer < _config.DirectorSpawnInterval) return;
 
-        _spawnTimer = 0f;
-        SpawnEnemy();
+        _timer = 0f;
+        TrySpawnSlot();
     }
 
-    private void SpawnEnemy() {
-        if (_runtime.IsFull(_config.MaxQueueSize)) return;
+    private void TrySpawnSlot() {
+        if (_runtime.Count < 8)
+            SpawnSlot(_runtime.Count);
+    }
 
-        CharacterKey key = new CharacterKey(TeamType.Enemy,
-                                            CharacterType.Vanguard);
+    private void SpawnSlot(int index) {
+        Vector3 position = _startPosition + Vector3.right * (index * _spacing);
 
-        EnemySpawnRequest request = new EnemySpawnRequest(key);
-        _runtime.Add(request);
+        var slot = _runtime.AddSlot(position);
+
+        var platform = _platformPool.Get();
+        slot.AttachPlatform(platform);
+
+        var enemy = _characterPool.Get(
+            new CharacterKey(TeamType.Enemy, CharacterType.Vanguard),
+            platform.EnemyAnchor.position);
+
+        slot.AttachCharacter(enemy);
     }
 }
