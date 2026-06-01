@@ -16,6 +16,12 @@ public class CharacterView : MonoBehaviour {
         _capsuleCollider.enabled = true;
     }
 
+    public void EnableConveyorMode() {
+        gameObject.SetActive(true);
+        _agent.enabled = false;
+        _capsuleCollider.enabled = false;
+    }
+
     public void Disable() {
         _agent.enabled = false;
         _capsuleCollider.enabled = false;

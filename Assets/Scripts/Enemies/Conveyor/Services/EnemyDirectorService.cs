@@ -2,56 +2,53 @@ using UnityEngine;
 using Zenject;
 
 public class EnemyDirectorService : ITickable {
-    private readonly EnemyConveyorRuntime _runtime;
+    private readonly EnemyConveyorRoot _conveyorRoot;
     private readonly EnemyConveyorConfig _config;
+
+    private readonly EnemyConveyorLayoutService _layoutService;
+    private readonly EnemyConveyorRuntime _runtime;
+
     private readonly EnemyPlatformPool _platformPool;
     private readonly CharacterPool _characterPool;
 
-    private float _timer;
+    private float _spawnTimer;
 
-    private Vector3 _startPosition = Vector3.zero;
-    private float _spacing = 2.2f;
-
-    public EnemyDirectorService(EnemyConveyorRuntime runtime,
+    public EnemyDirectorService(EnemyConveyorRoot conveyorRoot,
                                 EnemyConveyorConfig config,
+                                EnemyConveyorLayoutService layoutService,
+                                EnemyConveyorRuntime runtime,
                                 EnemyPlatformPool platformPool,
                                 CharacterPool characterPool) {
-        _runtime = runtime;
+        _conveyorRoot = conveyorRoot;
         _config = config;
+
+        _layoutService = layoutService;
+        _runtime = runtime;
+
         _platformPool = platformPool;
         _characterPool = characterPool;
-
-        _runtime.Initialize(_startPosition, _spacing);
-
-        SpawnSlot(0);
     }
 
     public void Tick() {
-        _timer += Time.deltaTime;
+        _spawnTimer += Time.deltaTime;
 
-        if (_timer < _config.DirectorSpawnInterval) return;
+        if (_spawnTimer < _config.DirectorSpawnInterval) return;
 
-        _timer = 0f;
-        TrySpawnSlot();
+        _spawnTimer = 0f;
+        TryCreateConveyorSlot();
     }
 
-    private void TrySpawnSlot() {
-        if (_runtime.Count < 8)
-            SpawnSlot(_runtime.Count);
-    }
-
-    private void SpawnSlot(int index) {
-        Vector3 position = _startPosition + Vector3.right * (index * _spacing);
-
-        var slot = _runtime.AddSlot(position);
-
-        var platform = _platformPool.Get();
-        slot.AttachPlatform(platform);
-
-        var enemy = _characterPool.Get(
-            new CharacterKey(TeamType.Enemy, CharacterType.Vanguard),
-            platform.EnemyAnchor.position);
-
-        slot.AttachCharacter(enemy);
+    private void TryCreateConveyorSlot() {
+        if (_runtime.IsFull(_config.MaxQueueSize)) return;
+        CharacterKey enemyKey = new CharacterKey(TeamType.Enemy, CharacterType.Vanguard);
+        EnemyPlatformView platform = _platformPool.Get();
+        platform.transform.position = _conveyorRoot.SpawnPoint.position;
+        BattlefieldCharacter enemy = _characterPool.Get(enemyKey, platform.EnemyAnchor.position);
+        enemy.Initialize(enemyKey, CharacterSpawnState.Conveyor);
+        enemy.OnSpawned();
+        enemy.transform.SetParent(platform.EnemyAnchor, true);
+        EnemyConveyorSlotRuntime slot = new EnemyConveyorSlotRuntime(platform, enemy);
+        _runtime.AddFirst(slot);
+        _layoutService.RefreshLayout();
     }
 }

@@ -39,7 +39,6 @@ public class CharacterPool {
             CreateInstance(key);
 
         character.transform.position = position;
-        character.OnSpawned();
         return character;
     }
 

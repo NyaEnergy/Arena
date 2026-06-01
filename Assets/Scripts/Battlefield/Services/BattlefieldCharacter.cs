@@ -10,6 +10,7 @@ public class BattlefieldCharacter : MonoBehaviour, IPoolableObject {
     private CharacterPool _characterPool;
 
     private CharacterAIController _aiController;
+    private CharacterSpawnState _spawnState;
 
     [Inject]
     private void Construct(
@@ -22,26 +23,41 @@ public class BattlefieldCharacter : MonoBehaviour, IPoolableObject {
     }
 
     private void Update() {
+        if (_spawnState != CharacterSpawnState.Battlefield) return;
+
         if (_installer.Brain.Runtime.IsDead.CurrentValue) {
             _characterPool.Return(_characterKey, this);
             return;
         }
+
         _aiController.Tick();
     }
 
-    public void Initialize(CharacterKey characterKey) {
+    public void Initialize(CharacterKey characterKey, CharacterSpawnState spawnState) {
         _characterKey = characterKey;
+        _spawnState = spawnState;
     }
 
     public void OnSpawned() {
-        _installer.CreateBrain();
-        _battlefieldRegistry.Register(_installer.Brain);
-        _aiController = new CharacterAIController(_installer.Brain, _detectionService);
-        _installer.Brain.View.Enable();
+        if (_spawnState == CharacterSpawnState.Battlefield) {
+            _installer.Brain.View.Enable();
+            return;
+        }
+        _installer.Brain.View.EnableConveyorMode();
     }
 
     public void OnDespawned() {
-        _battlefieldRegistry.Unregister(_installer.Brain);
         _installer.Brain.View.Disable();
+    }
+
+    public void EnterBattlefield() {
+        _spawnState = CharacterSpawnState.Battlefield;
+        _battlefieldRegistry.Register(_installer.Brain);
+        _aiController ??= new CharacterAIController(_installer.Brain, _detectionService);
+    }
+
+    public void LeaveBattlefield() {
+        _battlefieldRegistry.Unregister(_installer.Brain);
+        _installer.Brain.TargetComponent.ClearTarget();
     }
 }

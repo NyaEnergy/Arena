@@ -1,29 +1,27 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class EnemyConveyorRuntime {
-    private readonly List<EnemyConveyorSlot> _slots = new();
+    private readonly List<EnemyConveyorSlotRuntime> _slots = new();
 
-    public IReadOnlyList<EnemyConveyorSlot> Slots => _slots;
+    public IReadOnlyList<EnemyConveyorSlotRuntime> Slots => _slots;
     public int Count => _slots.Count;
 
-    public void Initialize(Vector3 startPosition, float spacing) {
-        _slots.Clear();
-        AddInitialSlot(startPosition);
+    public bool IsFull(int maxCount) {
+        return _slots.Count >= maxCount;
     }
 
-    public EnemyConveyorSlot AddSlot(Vector3 position) {
-        var slot = new EnemyConveyorSlot(position);
-        _slots.Add(slot);
+    public void AddFirst(EnemyConveyorSlotRuntime slot) {
+        _slots.Insert(0, slot);
+    }
+
+    public EnemyConveyorSlotRuntime RemoveLast() {
+        int lastIndex = _slots.Count - 1;
+        var slot = _slots[lastIndex];
+        _slots.RemoveAt(lastIndex);
         return slot;
     }
 
-    public EnemyConveyorSlot GetSlot(int index) {
+    public EnemyConveyorSlotRuntime Get(int index) {
         return _slots[index];
-    }
-
-    private void AddInitialSlot(Vector3 startPosition) {
-        _slots.Add(new EnemyConveyorSlot(startPosition));
     }
 }

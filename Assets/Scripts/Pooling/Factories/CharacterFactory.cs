@@ -9,7 +9,9 @@ public class CharacterFactory {
 
     public BattlefieldCharacter Spawn(CharacterKey key, Vector3 position) {
         BattlefieldCharacter character = _characterPool.Get(key, position);
-        character.Initialize(key);
+        character.Initialize(key, CharacterSpawnState.Battlefield);
+        character.OnSpawned();
+        character.EnterBattlefield();
         return character;
     }
 }
