@@ -5,9 +5,8 @@ public class AttackState : CharacterState {
         _brain.MovementComponent.Stop();
     }
     public override void Tick() {
-        if (_brain.CombatComponent.IsCanAttack) {
-            _brain.CombatComponent.Attack();
-            _brain.View.Animator.SetTrigger("Attack");
-        }
+        if (!_brain.CombatComponent.IsCanAttack) return;
+        if(!_brain.CombatComponent.TryAttack()) return;
+        _brain.View.PlayAttack();
     }
 }

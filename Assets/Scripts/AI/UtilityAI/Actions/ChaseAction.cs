@@ -5,9 +5,13 @@ public class ChaseAction : UtilityAction {
         if(context.CurrentTarget == null) {
             return 0f;
         }
-        if(context.DistanceToTarget > context.Self.Config.AttackRange * context.Self.Config.AttackRange) {
-            return 80f;
+
+        float sqrAttackRange = context.Self.Config.AttackRange * context.Self.Config.AttackRange;
+
+        if (context.SqrDistanceToTarget <= sqrAttackRange) {
+            return 0f;
         }
-        return 0f;
+
+        return 80f;
     }
 }

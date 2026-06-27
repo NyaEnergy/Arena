@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AllyView
   _animator: {fileID: 2398378721589354137}
   _agent: {fileID: 8101784571116791004}
-  _capsuleCollider: {fileID: 932120619703133116}
+  _collider: {fileID: 932120619703133116}
   _bodyRenderer: {fileID: 1768789401924862647}
 --- !u!114 &4792686277307113316
 MonoBehaviour:
@@ -79,7 +79,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattlefieldCharacter
   _installer: {fileID: 4792686277307113316}
-  _characterType: 0
 --- !u!195 &8101784571116791004
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -6,58 +6,90 @@ public class BattlefieldCharacter : MonoBehaviour, IPoolableObject {
 
     private BattlefieldRegistry _battlefieldRegistry;
     private DetectionService _detectionService;
-    private CharacterKey _characterKey;
+    private UtilityAIService _utilityAIService;
     private CharacterPool _characterPool;
 
     private CharacterAIController _aiController;
-    private CharacterSpawnState _spawnState;
+
+    private CharacterKey _characterKey;
+
+    private bool _isInitialized;
+    private bool _isSpawned;
+    private bool _isRegistered;
+    private bool _isReturnToPool;
+
+    public CharacterView View => _installer.Brain.View;
+    public CharacterBrain Brain => _installer.Brain;
+    public CharacterKey CharacterKey => _characterKey;
 
     [Inject]
     private void Construct(
         BattlefieldRegistry battlefieldRegistry,
         DetectionService detectionService,
+        UtilityAIService utilityAIService,
         CharacterPool characterPool) {
         _battlefieldRegistry = battlefieldRegistry;
         _detectionService = detectionService;
+        _utilityAIService = utilityAIService;
         _characterPool = characterPool;
     }
 
     private void Update() {
-        if (_spawnState != CharacterSpawnState.Battlefield) return;
-
-        if (_installer.Brain.Runtime.IsDead.CurrentValue) {
-            _characterPool.Return(_characterKey, this);
-            return;
-        }
-
+        if (!_isSpawned ||
+            !_isRegistered ||
+            _isReturnToPool ||
+            _aiController == null) return;
+        
         _aiController.Tick();
+        
+        if (!Brain.Runtime.IsDead.CurrentValue) return;
+
+        _isReturnToPool = true;
+
+        _characterPool.Return(this);
     }
 
-    public void Initialize(CharacterKey characterKey, CharacterSpawnState spawnState) {
+    public void Initialize(CharacterKey characterKey) {
+        if (_isInitialized) return;
         _characterKey = characterKey;
-        _spawnState = spawnState;
+        _isInitialized = true;
     }
 
     public void OnSpawned() {
-        if (_spawnState == CharacterSpawnState.Battlefield) {
-            _installer.Brain.View.Enable();
-            return;
-        }
-        _installer.Brain.View.EnableConveyorMode();
+        if (!_isInitialized || _isSpawned) return;
+
+        _isReturnToPool = false;
+        
+        View.Enable();
+        View.ResetAnimationState();
+
+        Brain.Reset();
+        
+        _isSpawned = true;
     }
 
     public void OnDespawned() {
-        _installer.Brain.View.Disable();
+        LeaveBattlefield();
+        _aiController?.Reset();
+        View.Disable();
+        _isSpawned = false;
+        _isReturnToPool = false;
     }
 
     public void EnterBattlefield() {
-        _spawnState = CharacterSpawnState.Battlefield;
-        _battlefieldRegistry.Register(_installer.Brain);
-        _aiController ??= new CharacterAIController(_installer.Brain, _detectionService);
+        if (!_isSpawned || _isRegistered) return;
+
+        _aiController ??= new CharacterAIController(Brain, _detectionService, _utilityAIService);
+        _aiController.Reset();
+        _battlefieldRegistry.Register(Brain);
+        _isRegistered = true;
     }
 
     public void LeaveBattlefield() {
-        _battlefieldRegistry.Unregister(_installer.Brain);
+        if (_isRegistered) {
+            _battlefieldRegistry.Unregister(Brain);
+            _isRegistered = false;
+        }
         _installer.Brain.TargetComponent.ClearTarget();
     }
 }

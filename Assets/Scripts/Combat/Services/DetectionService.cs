@@ -4,8 +4,6 @@ using UnityEngine;
 public class DetectionService {
     private readonly BattlefieldRegistry _battlefieldRegistry;
     
-    private readonly float _detectionRadius = 12f;
-
     public DetectionService(BattlefieldRegistry battlefieldRegistry) {
         _battlefieldRegistry = battlefieldRegistry;
     }
@@ -17,14 +15,16 @@ public class DetectionService {
         Vector3 ownerPosition = owner.View.transform.position;
 
         for (int i = 0; i < targets.Count; ++i) {
-            if (targets[i].Runtime.IsDead.CurrentValue) continue;
-            float distance = Vector3.SqrMagnitude(ownerPosition - targets[i].View.transform.position);
-            if (distance > _detectionRadius * _detectionRadius) continue;
+            CharacterBrain target = targets[i];
+            if (target == null) continue;
 
-            if(distance < closestDistance) {
-                closestDistance = distance;
-                closestTarget = targets[i];
-            }
+            if (target.Runtime.IsDead.CurrentValue) continue;
+
+            float sqrDistance = Vector3.SqrMagnitude(ownerPosition - target.View.transform.position);
+            if (sqrDistance >= closestDistance) continue;
+
+            closestDistance = sqrDistance;
+            closestTarget = target;
         }
 
         return closestTarget;

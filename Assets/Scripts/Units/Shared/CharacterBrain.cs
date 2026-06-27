@@ -28,4 +28,11 @@ public class CharacterBrain {
         _movementComponent = new MovementComponent(view, config);
         _combatComponent = new CombatComponent(this, config, _targetComponent);
     }
+
+    public void Reset() {
+        _runtime.Reset();
+        _targetComponent.ClearTarget();
+        _movementComponent.Reset();
+        _combatComponent.Reset();
+    }
 }

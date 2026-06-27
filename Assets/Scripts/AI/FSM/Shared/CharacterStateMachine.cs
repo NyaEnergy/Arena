@@ -21,6 +21,13 @@ public class CharacterStateMachine {
         };
     }
 
+    public void Reset(CharacterStateType stateType) {
+        _currentState?.Exit();
+        _currentState = null;
+        
+        SetState(stateType);
+    }
+
     public void SetState(CharacterStateType stateType) {
         CharacterState newState = _states[stateType];
 

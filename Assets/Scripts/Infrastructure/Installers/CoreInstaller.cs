@@ -9,5 +9,6 @@ public class CoreInstaller : MonoInstaller {
 
     private void BindServices() {
         Container.BindInterfacesAndSelfTo<GameTimeService>().AsSingle();
+        Container.Bind<GameInputService>().AsSingle();
     }
 }

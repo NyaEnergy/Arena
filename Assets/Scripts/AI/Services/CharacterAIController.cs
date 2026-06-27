@@ -8,10 +8,12 @@ public class CharacterAIController {
 
     private readonly AIContext _context;
 
-    public CharacterAIController(CharacterBrain brain, DetectionService detectionService) {
+    public CharacterAIController(CharacterBrain brain,
+                                 DetectionService detectionService,
+                                 UtilityAIService utilityAIService) {
         _brain = brain;
         _detectionService = detectionService;
-        _utilityAIService = new UtilityAIService();
+        _utilityAIService = utilityAIService;
 
         _context = new AIContext();
 
@@ -22,7 +24,13 @@ public class CharacterAIController {
             new RetreatState(brain),
             new DeadState(brain));
 
-        _stateMachine.SetState(CharacterStateType.Idle);
+        Reset();
+    }
+
+    public void Reset() {
+        _brain.TargetComponent.ClearTarget();
+        _context.Reset();
+        _stateMachine.Reset(CharacterStateType.Idle);
     }
 
     public void Tick() {
@@ -33,13 +41,8 @@ public class CharacterAIController {
         
         CharacterBrain target = _detectionService.FindClosestTarget(_brain);
         _brain.TargetComponent.SetTarget(target);
-        
-        if(target == null) {
-            _stateMachine.SetState(CharacterStateType.Idle);
-            return;
-        }
 
-        UpdateContext();
+        UpdateContext(target);
 
         AIActionType action = _utilityAIService.Evaluate(_context);
         ProcessAction(action);
@@ -47,21 +50,18 @@ public class CharacterAIController {
         _stateMachine.Tick();
     }
 
-    private void UpdateContext() {
-        CharacterBrain target = _detectionService.FindClosestTarget(_brain);
-        _brain.TargetComponent.SetTarget(target);
-        
+    private void UpdateContext(CharacterBrain target) {
         _context.Self = _brain;
         _context.CurrentTarget = target;
 
         _context.CurrentHpPercent = _brain.Runtime.CurrentHP.CurrentValue / _brain.Config.MaxHP;
 
         if(target == null) {
-            _context.DistanceToTarget = 999f;
+            _context.SqrDistanceToTarget = float.MaxValue;
             return;
         }
 
-        _context.DistanceToTarget = Vector3.SqrMagnitude(_brain.View.transform.position - target.View.transform.position);
+        _context.SqrDistanceToTarget = Vector3.SqrMagnitude(_brain.View.transform.position - target.View.transform.position);
     }
 
     private void ProcessAction(AIActionType action) {

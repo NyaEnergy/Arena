@@ -14,7 +14,5 @@ public class GameplayInstaller : MonoInstaller {
         Container.Bind<DetectionService>().AsSingle();
         Container.Bind<UtilityAIService>().AsSingle();
         Container.BindInterfacesTo<CharacterBootstrap>().AsSingle();
-
-        Container.BindInterfacesAndSelfTo<PressureService>().AsSingle();
     }
 }
