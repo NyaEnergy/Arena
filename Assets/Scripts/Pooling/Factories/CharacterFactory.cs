@@ -7,9 +7,11 @@ public class CharacterFactory {
         _characterPool = characterPool;
     }
 
-    public BattlefieldCharacter Spawn(CharacterKey key,
-                                      Vector3 position) {
-        BattlefieldCharacter character = _characterPool.Get(key, position);
+    public CharacterView Spawn(CharacterKey key, Vector3 position) {
+        CharacterView character = _characterPool.Get(key, position);
+
+        if (character == null) return null;
+
         character.EnterBattlefield();
         return character;
     }

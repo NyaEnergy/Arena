@@ -13,4 +13,8 @@ public class HealthComponent {
     public void ApplyDamage(float damage) {
         _runtime.ApplyDamage(damage);
     }
+
+    public void ApplyHealing(float healing) {
+        _runtime.ApplyHealing(healing);
+    }
 }

@@ -1,13 +1,18 @@
 public class RetreatAction : UtilityAction {
-    private const float RETREAT_HP_THRESHOLD = 0.25f;
+    private const float LOW_HEALTH_RETREAT_SCORE = 200f;
 
     public override AIActionType ActionType => AIActionType.Retreat;
 
     public override float CalculateScore(AIContext context) {
-        if (context.CurrentTarget == null ||
-            context.CurrentHpPercent > RETREAT_HP_THRESHOLD) {
+        if (context.CurrentTarget == null)
             return 0f;
-        }
-        return 200f;
+
+        ICharacterRetreatConfig config =
+            context.Self.Config as ICharacterRetreatConfig;
+
+        if (config == null || config.RetreatHPThreshold <= 0f) return 0f;
+
+        return context.CurrentHpPercent <= config.RetreatHPThreshold ?
+            LOW_HEALTH_RETREAT_SCORE : 0f;
     }
 }

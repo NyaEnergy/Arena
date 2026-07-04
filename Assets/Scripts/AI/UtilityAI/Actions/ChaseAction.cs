@@ -1,17 +1,21 @@
 public class ChaseAction : UtilityAction {
+    private const float CHASE_SCORE = 80f;
+
     public override AIActionType ActionType => AIActionType.Chase;
 
     public override float CalculateScore(AIContext context) {
-        if(context.CurrentTarget == null) {
-            return 0f;
-        }
+        if (context.CurrentTarget == null) return 0f;
 
-        float sqrAttackRange = context.Self.Config.AttackRange * context.Self.Config.AttackRange;
+        ICharacterAttackConfig config =
+            context.Self.Config as ICharacterAttackConfig;
 
-        if (context.SqrDistanceToTarget <= sqrAttackRange) {
-            return 0f;
-        }
+        if (context.CurrentTarget == null) return 0f;
 
-        return 80f;
+        Range attackDistanceRange = config.AttackDistanceRange;
+        float sqrMaximumAttackDistance = attackDistanceRange.Max *
+                                         attackDistanceRange.Max;
+
+        return context.SqrDistanceToTarget > sqrMaximumAttackDistance ?
+            CHASE_SCORE : 0f;
     }
 }

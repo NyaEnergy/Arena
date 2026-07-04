@@ -2,26 +2,39 @@ using UnityEngine;
 
 public class CombatComponent {
     private readonly CharacterBrain _owner;
-    private readonly CharacterConfig _config;
+    private readonly ICharacterAttackConfig _config;
     private readonly TargetComponent _targetComponent;
 
     private float _lastAttackTime;
 
-    public bool IsCanAttack {
+    public bool CanAttack {
         get {
             CharacterBrain target = _targetComponent.CurrentTarget.CurrentValue;
-            if (target == null) return false;
-            if (target.Runtime.IsDead.CurrentValue) return false;
-            float sqrDistance = Vector3.SqrMagnitude(_owner.View.transform.position - target.View.transform.position);
-            float sqrAttackRange = _config.AttackRange * _config.AttackRange;
-            if (sqrDistance > sqrAttackRange) return false;
-            if (Time.time < _lastAttackTime + _config.AttackCooldown) return false;
-            return true;
+
+            if (target == null ||
+                target.Runtime.IsDead.CurrentValue) return false;
+
+            float sqrDistance = Vector3.SqrMagnitude(_owner.View.transform.position -
+                                                     target.View.transform.position);
+
+            Range attackDistanceRange = _config.AttackDistanceRange;
+
+            float sqrMinimumAttackDistance = attackDistanceRange.Min *
+                                             attackDistanceRange.Min;
+
+            float sqrMaximumAttackDistance = attackDistanceRange.Max *
+                                             attackDistanceRange.Max;
+
+            if (sqrDistance < sqrMinimumAttackDistance) return false;
+            if (sqrDistance > sqrMaximumAttackDistance) return false;
+
+            return Time.time >= _lastAttackTime +
+                                _config.AttackCooldown;
         }
     }
 
     public CombatComponent(CharacterBrain owner,
-                           CharacterConfig config,
+                           ICharacterAttackConfig config,
                            TargetComponent targetComponent) {
         _owner = owner;
         _config = config;
@@ -35,8 +48,12 @@ public class CombatComponent {
     }
 
     public bool TryAttack() {
-        if (!IsCanAttack) return false;
-        CharacterBrain target = _targetComponent.CurrentTarget.CurrentValue;
+        if (!CanAttack) return false;
+
+        CharacterBrain target = _targetComponent
+                                .CurrentTarget
+                                .CurrentValue;
+
         target.HealthComponent.ApplyDamage(_config.Damage);
         _lastAttackTime = Time.time;
         return true;

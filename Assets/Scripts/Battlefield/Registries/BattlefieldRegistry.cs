@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 public class BattlefieldRegistry {
     private readonly List<CharacterBrain> _allies = new();
@@ -26,7 +25,13 @@ public class BattlefieldRegistry {
         _enemies.Remove(brain);
     }
 
+    public IReadOnlyList<CharacterBrain> GetAllies(TeamType teamType) {
+        return teamType == TeamType.Ally ?
+                           _allies : _enemies;
+    }
+
     public IReadOnlyList<CharacterBrain> GetEnemies(TeamType teamType) {
-        return teamType == TeamType.Ally ? _enemies : _allies;
+        return teamType == TeamType.Ally ?
+                           _enemies : _allies;
     }
 }

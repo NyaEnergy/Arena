@@ -1,8 +1,8 @@
 public enum CharacterType {
-    Vanguard,
-    Medic,
-    Hunter,
     Controller,
+    Hunter,
+    Medic,
+    Minion,
     Summoner,
-    Minion
+    Vanguard,
 }

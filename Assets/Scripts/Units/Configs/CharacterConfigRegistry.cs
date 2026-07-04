@@ -1,22 +1,26 @@
 using System.Collections.Generic;
 
 public class CharacterConfigRegistry {
-    private readonly Dictionary<CharacterKey, CharacterConfig> _configs;
+    private readonly Dictionary<CharacterType, ICharacterConfig> _configs = new();
 
-    public CharacterConfigRegistry(List<CharacterConfig> configs) {
-        _configs = new Dictionary<CharacterKey, CharacterConfig>();
+    public CharacterConfigRegistry(List<ICharacterConfig> configs) {
+        for (int i = 0; i < configs.Count; i++) {
+            ICharacterConfig config = configs[i];
 
-        foreach (CharacterConfig config in configs) {
-            CharacterKey key =
-                new CharacterKey(
-                    config.TeamType,
-                    config.CharacterType);
+            if (config == null) continue;
 
-            _configs.Add(key, config);
+            _configs[config.CharacterType] = config;
         }
     }
 
-    public CharacterConfig Get(CharacterKey key) {
-        return _configs[key];
+    public ICharacterConfig Get(CharacterType characterType) {
+        _configs.TryGetValue(characterType,
+            out ICharacterConfig config);
+
+        return config;
+    }
+
+    public ICharacterConfig Get(CharacterKey key) {
+        return Get(key.CharacterType);
     }
 }
