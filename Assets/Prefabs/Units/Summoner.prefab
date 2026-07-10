@@ -10396,7 +10396,7 @@ MonoBehaviour:
   _healthBarView: {fileID: 1436217967942176802}
   _aimPoint: {fileID: 8967225689345656215}
   _hitEffect: {fileID: 640058821425561}
-  _summonOrigin: {fileID: 0}
+  _summonOrigin: {fileID: 1828249844070477190}
   _summonEffect: {fileID: 556202588316402615}
 --- !u!195 &8101784571116791004
 NavMeshAgent:

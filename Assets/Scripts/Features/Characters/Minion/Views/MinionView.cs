@@ -9,17 +9,19 @@ public class MinionView : CharacterView {
 
     public override CharacterType CharacterType => CharacterType.Minion;
 
-    public void PlaySpawn() {
-        if (_spawnEffect == null) return;
-
-        _spawnEffect.Play();
-    }
+    public void PlaySpawn() => RestartEffect(_spawnEffect);
 
     public override void PlayAttack(CharacterView target) {
         base.PlayAttack(target);
+        RestartEffect(_attackEffect);
+    }
 
-        if (_attackEffect == null) return;
+    private void RestartEffect(ParticleSystem effect) {
+        if (effect == null) return;
 
-        _attackEffect.Play();
+        effect.Stop(
+            true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        effect.Play(true);
     }
 }

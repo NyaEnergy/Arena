@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using Zenject;
 
 public class SummonerMinionSpawnService {
@@ -17,59 +18,128 @@ public class SummonerMinionSpawnService {
                                      CharacterBrain target,
                                      int spawnIndex) {
         if (summoner == null ||
-            target == null) {
-
-            return null;
-        }
+            target == null ||
+            summoner.View == null ||
+            target.View == null) return null;
 
         MinionConfig minionConfig = _config.MinionConfig;
 
         if (minionConfig == null) return null;
 
-        CharacterFactory characterFactory =
-            _characterFactory.Value;
+        CharacterFactory characterFactory = _characterFactory.Value;
 
         if (characterFactory == null) return null;
 
-        Vector3 spawnPosition =
-            GetSpawnPosition(summoner, target, spawnIndex);
+        if (!TryGetSpawnPosition(summoner,
+                                 target,
+                                 spawnIndex,
+                                 out Vector3 spawnPosition)) return null;
 
-        CharacterKey minionKey =
-            new(summoner.Runtime.TeamType, minionConfig.CharacterType);
+        CharacterKey minionKey = new(
+                summoner.Runtime.TeamType,
+                minionConfig.CharacterType);
 
-        return characterFactory.Spawn(minionKey, spawnPosition);
+        CharacterView minion =
+            characterFactory.Spawn(
+                minionKey, spawnPosition);
+
+        if (minion == null) return null;
+
+        RotateToTarget(minion, target);
+
+        return minion;
     }
 
-    private Vector3 GetSpawnPosition(CharacterBrain summoner,
+    private bool TryGetSpawnPosition(CharacterBrain summoner,
                                      CharacterBrain target,
-                                     int spawnIndex) {
+                                     int spawnIndex,
+                                     out Vector3 spawnPosition) {
         Vector3 summonerPosition =
             summoner.View.transform.position;
 
         Vector3 direction =
-            target.View.transform.position - summonerPosition;
+            GetDirectionToTarget(summoner, target);
+
+        Vector3 side = new(-direction.z, 0f, direction.x);
+
+        int safeSpawnIndex = spawnIndex >= 0 ? spawnIndex : 0;
+
+        float sideSign = safeSpawnIndex % 2 == 0 ? -1f : 1f;
+
+        int sideStep = safeSpawnIndex / 2 + 1;
+
+        Vector3 primaryPosition = summonerPosition +
+                                  direction * _config.MinionForwardOffset +
+                                  side * (_config.MinionSideOffset *
+                                          sideSign * sideStep);
+
+        if (TrySampleNavMesh(primaryPosition,
+                         out spawnPosition)) return true;
+
+        Vector3 forwardFallbackPosition = summonerPosition +
+                                          direction * _config.MinionForwardOffset;
+
+        if (TrySampleNavMesh(forwardFallbackPosition,
+                         out spawnPosition)) return true;
+
+        return TrySampleNavMesh(summonerPosition,
+                            out spawnPosition);
+    }
+
+    private Vector3 GetDirectionToTarget(CharacterBrain summoner,
+                                         CharacterBrain target) {
+        Vector3 direction = target.View.transform.position -
+                            summoner.View.transform.position;
 
         direction.y = 0f;
 
-        if (direction.sqrMagnitude < MIN_DIRECTION_SQR_MAGNITUDE) {
+        if (direction.sqrMagnitude <
+            MIN_DIRECTION_SQR_MAGNITUDE) {
+
             direction = summoner.View.transform.forward;
             direction.y = 0f;
         }
 
-        direction.Normalize();
+        if (direction.sqrMagnitude <
+            MIN_DIRECTION_SQR_MAGNITUDE) return Vector3.forward;
 
-        Vector3 side = new(-direction.z, 0f, direction.x);
+        return direction.normalized;
+    }
 
-        float sideSign =
-            spawnIndex % 2 == 0 ? -1f : 1f;
+    private bool TrySampleNavMesh(Vector3 position,
+                              out Vector3 sampledPosition) {
 
-        int sideStep =
-            spawnIndex / 2 + 1;
+        sampledPosition = Vector3.zero;
 
-        Vector3 offset =
-            direction * _config.MinionForwardOffset +
-            side * (_config.MinionSideOffset * sideSign * sideStep);
+        float sampleDistance =
+            _config.MinionNavMeshSampleDistance;
 
-        return summonerPosition + offset;
+        if (sampleDistance <= 0f) return false;
+
+        if (!NavMesh.SamplePosition(position,
+                                out NavMeshHit hit,
+                                    sampleDistance,
+                                    NavMesh.AllAreas)) return false;
+
+        sampledPosition = hit.position;
+
+        return true;
+    }
+
+    private void RotateToTarget(CharacterView minion,
+                                CharacterBrain target) {
+
+        Vector3 direction = target.View.transform.position -
+                            minion.transform.position;
+
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <
+            MIN_DIRECTION_SQR_MAGNITUDE) return;
+
+        minion.transform.rotation =
+            Quaternion.LookRotation(
+                direction.normalized,
+                Vector3.up);
     }
 }

@@ -7,23 +7,24 @@ public class SummonerView : CharacterView {
 
     public override CharacterType CharacterType => CharacterType.Summoner;
 
-    public Vector3 SummonOriginPosition =>
-        _summonOrigin != null
-            ? _summonOrigin.position
-            : AimPosition;
+    public Vector3 SummonOriginPosition => _summonOrigin != null ?
+                                           _summonOrigin.position :
+                                           AimPosition;
 
     public void PlaySummon() {
-        if (Animator != null) {
-            Animator.SetTrigger("Summon");
-        }
+        if (Animator != null) Animator.SetTrigger("Summon");
 
         if (_summonEffect == null) return;
 
         if (_summonOrigin != null) {
-            _summonEffect.transform.position = _summonOrigin.position;
-            _summonEffect.transform.rotation = _summonOrigin.rotation;
+            _summonEffect.transform.SetPositionAndRotation(
+                _summonOrigin.position,
+                _summonOrigin.rotation);
         }
 
-        _summonEffect.Play();
+        _summonEffect.Stop(
+            true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        _summonEffect.Play(true);
     }
 }

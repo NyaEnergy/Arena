@@ -51,16 +51,18 @@ public class SummonerAIBehavior : ICharacterAIBehavior {
         Range summonDistanceRange =
             _config.SummonDistanceRange;
 
-        Range sqrSummonDistanceRange = new(
-            summonDistanceRange.Min * summonDistanceRange.Min,
-            summonDistanceRange.Max * summonDistanceRange.Max);
+        float minSummonSqrDistance = summonDistanceRange.Min *
+                                     summonDistanceRange.Min;
 
-        if (sqrDistance > sqrSummonDistanceRange.Max) {
+        float maxSummonSqrDistance = summonDistanceRange.Max *
+                                     summonDistanceRange.Max;
+
+        if (sqrDistance > maxSummonSqrDistance) {
             MoveToSummonDistance(target);
             return;
         }
 
-        if (sqrDistance < sqrSummonDistanceRange.Min) {
+        if (sqrDistance < minSummonSqrDistance) {
             MoveAwayFromTarget(target);
             return;
         }
@@ -70,7 +72,9 @@ public class SummonerAIBehavior : ICharacterAIBehavior {
         TrySummon(target);
     }
 
-    private void MoveToSummonDistance(CharacterBrain target) {
+    private void MoveToSummonDistance(
+        CharacterBrain target) {
+
         float stoppingDistance =
             Mathf.Max(0f, _config.SummonDistanceRange.Max -
                           SUMMON_DISTANCE_BUFFER);
@@ -82,43 +86,43 @@ public class SummonerAIBehavior : ICharacterAIBehavior {
     }
 
     private void MoveAwayFromTarget(CharacterBrain target) {
-        Vector3 currentPosition =
-            _brain.View.transform.position;
 
-        Vector3 awayDirection =
-            currentPosition - target.View.transform.position;
+        Vector3 currentPosition = _brain.View.transform.position;
+
+        Vector3 awayDirection = currentPosition -
+                                target.View.transform.position;
 
         awayDirection.y = 0f;
 
-        if (awayDirection.sqrMagnitude < MIN_DIRECTION_SQR_MAGNITUDE) {
+        if (awayDirection.sqrMagnitude <
+            MIN_DIRECTION_SQR_MAGNITUDE) {
+
             _brain.MovementComponent.Stop();
             return;
         }
 
-        Vector3 retreatPosition =
-            currentPosition +
-            awayDirection.normalized * _config.RetreatStepDistance;
+        Vector3 retreatPosition = currentPosition +
+                                  awayDirection.normalized *
+                                  _config.RetreatStepDistance;
 
         _brain.MovementComponent.MoveToPosition(retreatPosition);
     }
 
     private void TrySummon(CharacterBrain target) {
-        if (Time.time < _runtime.NextSummonTime) return;
+        float currentTime = Time.time;
 
+        if (!_runtime.IsSummonReady(currentTime)) return;
         if (!_runtime.HasFreeMinionSlot(_config.MaxMinions)) return;
 
-        int spawnIndex =
-            _runtime.GetNextSpawnIndex();
-
         CharacterView minion =
-            _spawnService.SpawnMinion(_brain, target, spawnIndex);
+            _spawnService.SpawnMinion(
+                _brain, target, _runtime.SpawnIndex);
 
         if (minion == null) return;
 
-        _runtime.AddMinion(minion);
-
-        _runtime.NextSummonTime =
-            Time.time + _config.SummonCooldown;
+        _runtime.RegisterMinion(minion,
+                                currentTime,
+                                _config.SummonCooldown);
 
         SummonerView summonerView =
             _brain.View as SummonerView;

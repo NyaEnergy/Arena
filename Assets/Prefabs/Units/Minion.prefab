@@ -15097,7 +15097,7 @@ MonoBehaviour:
   _aimPoint: {fileID: 1215708590059557060}
   _hitEffect: {fileID: 8338182281513963828}
   _attackEffect: {fileID: 8254903237488009427}
-  _spawnEffect: {fileID: 0}
+  _spawnEffect: {fileID: 2269541004234064199}
 --- !u!195 &8101784571116791004
 NavMeshAgent:
   m_ObjectHideFlags: 0

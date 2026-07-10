@@ -8,26 +8,22 @@ public class DemoBattleAutoRespawnService : IInitializable,
                                             ITickable,
                                             IDisposable {
     private const float RESPAWN_DELAY = 1f;
-
     private const float RESPAWN_DISTANCE_FROM_CENTER = 3.5f;
     private const float RESPAWN_RANDOM_RADIUS = 1.2f;
     private const float NAV_MESH_SAMPLE_DISTANCE = 3f;
-
     private const float MIN_DIRECTION_SQR_MAGNITUDE = 0.001f;
 
     private readonly IReadOnlyList<DemoBattleSpawnEntry> _spawnEntries;
     private readonly CharacterDeathEventService _deathEventService;
     private readonly CharacterFactory _characterFactory;
     private readonly DemoBattleCombatCenterService _combatCenterService;
-
     private readonly List<DemoBattleAutoRespawnRequest> _requests = new();
     private readonly System.Random _random = new();
 
-    public DemoBattleAutoRespawnService(
-        IReadOnlyList<DemoBattleSpawnEntry> spawnEntries,
-        CharacterDeathEventService deathEventService,
-        CharacterFactory characterFactory,
-        DemoBattleCombatCenterService combatCenterService) {
+    public DemoBattleAutoRespawnService(IReadOnlyList<DemoBattleSpawnEntry> spawnEntries,
+                                        CharacterDeathEventService deathEventService,
+                                        CharacterFactory characterFactory,
+                                        DemoBattleCombatCenterService combatCenterService) {
         _spawnEntries = spawnEntries;
         _deathEventService = deathEventService;
         _characterFactory = characterFactory;
@@ -50,6 +46,7 @@ public class DemoBattleAutoRespawnService : IInitializable,
             }
 
             SpawnRandomCharacter(request.TeamType);
+
             _requests.RemoveAt(i);
         }
     }
@@ -60,24 +57,27 @@ public class DemoBattleAutoRespawnService : IInitializable,
     }
 
     private void OnCharacterDied(CharacterDeathInfo deathInfo) {
+
+        if (deathInfo.CharacterType ==
+            CharacterType.Minion) return;
+
         if (!HasRespawnSource(deathInfo.TeamType,
-                              deathInfo.CharacterType)) {
-            return;
-        }
+                              deathInfo.CharacterType)) return;
 
         DemoBattleAutoRespawnRequest request =
-            new(deathInfo.TeamType, RESPAWN_DELAY);
+            new(deathInfo.TeamType,
+                RESPAWN_DELAY);
 
         _requests.Add(request);
     }
 
     private bool HasRespawnSource(TeamType teamType,
                                   CharacterType characterType) {
-        for (int i = 0; i < _spawnEntries.Count; i++) {
-            DemoBattleSpawnEntry spawnEntry =
-                _spawnEntries[i];
 
-            if (!spawnEntry.IsValid) continue;
+        for (int i = 0; i < _spawnEntries.Count; i++) {
+            DemoBattleSpawnEntry spawnEntry = _spawnEntries[i];
+
+            if (!CanUseForAutoRespawn(spawnEntry)) continue;
             if (spawnEntry.TeamType != teamType) continue;
             if (spawnEntry.CharacterType != characterType) continue;
 
@@ -87,7 +87,9 @@ public class DemoBattleAutoRespawnService : IInitializable,
         return false;
     }
 
-    private void SpawnRandomCharacter(TeamType teamType) {
+    private void SpawnRandomCharacter(
+        TeamType teamType) {
+
         DemoBattleSpawnEntry spawnEntry =
             GetRandomSpawnEntry(teamType);
 
@@ -111,24 +113,23 @@ public class DemoBattleAutoRespawnService : IInitializable,
             spawnEntry.SpawnPoint.rotation;
     }
 
-    private Vector3 GetRespawnPosition(DemoBattleSpawnEntry spawnEntry) {
-        if (spawnEntry.SpawnPoint == null) {
-            return Vector3.zero;
-        }
+    private Vector3 GetRespawnPosition(
+        DemoBattleSpawnEntry spawnEntry) {
 
-        if (!_combatCenterService.TryGetCenter(out Vector3 center)) {
+        if (spawnEntry.SpawnPoint == null) return Vector3.zero;
+
+        if (!_combatCenterService.TryGetCenter(out Vector3 center))
             return spawnEntry.SpawnPoint.position;
-        }
 
         Vector3 direction = spawnEntry.SpawnPoint.position - center;
 
         direction.y = 0f;
 
-        if (direction.sqrMagnitude < MIN_DIRECTION_SQR_MAGNITUDE) {
-            direction =
-                spawnEntry.TeamType == TeamType.Ally ?
-                    Vector3.left :
-                    Vector3.right;
+        if (direction.sqrMagnitude <
+            MIN_DIRECTION_SQR_MAGNITUDE) {
+
+            direction = spawnEntry.TeamType == TeamType.Ally ?
+                        Vector3.left : Vector3.right;
         }
 
         direction.Normalize();
@@ -136,17 +137,15 @@ public class DemoBattleAutoRespawnService : IInitializable,
         Vector3 randomOffset = GetRandomOffset();
 
         Vector3 position = center +
-            direction * RESPAWN_DISTANCE_FROM_CENTER +
-            randomOffset;
+                           direction * RESPAWN_DISTANCE_FROM_CENTER +
+                           randomOffset;
 
         position.y = spawnEntry.SpawnPoint.position.y;
 
-        if (NavMesh.SamplePosition(
-                position,
-                out NavMeshHit hit,
-                NAV_MESH_SAMPLE_DISTANCE,
-                NavMesh.AllAreas)) {
-
+        if (NavMesh.SamplePosition(position,
+                                   out NavMeshHit hit,
+                                   NAV_MESH_SAMPLE_DISTANCE,
+                                   NavMesh.AllAreas)) {
             return hit.position;
         }
 
@@ -164,6 +163,7 @@ public class DemoBattleAutoRespawnService : IInitializable,
     }
 
     private DemoBattleSpawnEntry GetRandomSpawnEntry(TeamType teamType) {
+
         int validCount = CountValidSpawnEntries(teamType);
 
         if (validCount <= 0) return null;
@@ -175,7 +175,7 @@ public class DemoBattleAutoRespawnService : IInitializable,
         for (int i = 0; i < _spawnEntries.Count; i++) {
             DemoBattleSpawnEntry spawnEntry = _spawnEntries[i];
 
-            if (!spawnEntry.IsValid) continue;
+            if (!CanUseForAutoRespawn(spawnEntry)) continue;
             if (spawnEntry.TeamType != teamType) continue;
 
             if (currentIndex == targetIndex) return spawnEntry;
@@ -187,17 +187,25 @@ public class DemoBattleAutoRespawnService : IInitializable,
     }
 
     private int CountValidSpawnEntries(TeamType teamType) {
+
         int count = 0;
 
         for (int i = 0; i < _spawnEntries.Count; i++) {
             DemoBattleSpawnEntry spawnEntry = _spawnEntries[i];
 
-            if (!spawnEntry.IsValid) continue;
+            if (!CanUseForAutoRespawn(spawnEntry)) continue;
             if (spawnEntry.TeamType != teamType) continue;
 
             count++;
         }
 
         return count;
+    }
+
+    private bool CanUseForAutoRespawn(DemoBattleSpawnEntry spawnEntry) {
+        return spawnEntry != null &&
+               spawnEntry.IsValid &&
+               spawnEntry.CharacterType !=
+               CharacterType.Minion;
     }
 }

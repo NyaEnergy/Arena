@@ -5,20 +5,29 @@ public class SummonerRuntime {
 
     private int _spawnIndex;
 
-    public float NextSummonTime;
+    public float NextSummonTime { get; private set; } = float.NegativeInfinity;
+
+    public int SpawnIndex => _spawnIndex;
 
     public void Reset() {
-        KillMinions();
+        KillOwnedMinions();
 
         _minions.Clear();
         _spawnIndex = 0;
         NextSummonTime = float.NegativeInfinity;
     }
 
-    public void AddMinion(CharacterView minion) {
+    public void RegisterMinion(CharacterView minion,
+                               float currentTime,
+                               float summonCooldown) {
         if (minion == null) return;
 
+        float safeCooldown = summonCooldown > 0f ? summonCooldown : 0f;
+
         _minions.Add(minion);
+        _spawnIndex++;
+
+        NextSummonTime = currentTime + safeCooldown;
     }
 
     public bool HasFreeMinionSlot(int maxMinions) {
@@ -29,39 +38,36 @@ public class SummonerRuntime {
         return _minions.Count < maxMinions;
     }
 
-    public int GetNextSpawnIndex() {
-        int currentIndex = _spawnIndex;
-        _spawnIndex++;
-        return currentIndex;
+    public bool IsSummonReady(float currentTime) {
+        return currentTime >= NextSummonTime;
     }
 
     public void CleanMinions() {
         for (int i = _minions.Count - 1; i >= 0; i--) {
             CharacterView minion = _minions[i];
 
-            if (minion == null ||
-                !minion.gameObject.activeInHierarchy ||
-                minion.Brain == null ||
-                minion.Brain.Runtime.IsDead.CurrentValue) {
-
+            if (IsMinionUnavailable(minion)) {
                 _minions.RemoveAt(i);
             }
         }
     }
 
-    public void KillMinions() {
+    private bool IsMinionUnavailable(CharacterView minion) {
+        return minion == null ||
+               !minion.gameObject.activeInHierarchy ||
+               minion.Brain == null ||
+               minion.Brain.Runtime.IsDead.CurrentValue;
+    }
+
+    private void KillOwnedMinions() {
         for (int i = 0; i < _minions.Count; i++) {
             CharacterView minion = _minions[i];
 
-            if (minion == null ||
-                minion.Brain == null ||
-                minion.Brain.Runtime.IsDead.CurrentValue) {
+            if (IsMinionUnavailable(minion)) continue;
 
-                continue;
-            }
+            float currentHP = minion.Brain.Runtime.CurrentHP.CurrentValue;
 
-            float currentHP =
-                minion.Brain.Runtime.CurrentHP.CurrentValue;
+            if (currentHP <= 0f) continue;
 
             minion.Brain.HealthComponent.ApplyDamage(currentHP);
         }

@@ -15,14 +15,17 @@ public class DemoBattleSpawnService : IInitializable {
         for (int i = 0; i < _spawnEntries.Count; i++) {
             DemoBattleSpawnEntry spawnEntry = _spawnEntries[i];
 
+            if (spawnEntry == null) continue;
             if (!spawnEntry.IsValid) continue;
 
-            CharacterKey characterKey =
-                new(spawnEntry.TeamType, spawnEntry.CharacterType);
+            if (spawnEntry.CharacterType == CharacterType.Minion) continue;
+
+            CharacterKey characterKey = new(spawnEntry.TeamType,
+                                            spawnEntry.CharacterType);
 
             CharacterView character =
-                _characterFactory.Spawn(
-                    characterKey, spawnEntry.SpawnPoint.position);
+                _characterFactory.Spawn(characterKey,
+                                        spawnEntry.SpawnPoint.position);
 
             if (character == null) continue;
 

@@ -21,6 +21,7 @@ public class SummonerConfig : ScriptableObject,
     [Header("Minion Spawn")]
     [SerializeField] private float _minionForwardOffset = 1.6f;
     [SerializeField] private float _minionSideOffset = 0.8f;
+    [SerializeField] private float _minionNavMeshSampleDistance = 1.5f;
 
     [Header("Movement")]
     [SerializeField] private float _retreatStepDistance = 2f;
@@ -35,7 +36,7 @@ public class SummonerConfig : ScriptableObject,
     public float MoveSpeed => _moveSpeed;
     public CharacterView Prefab => _prefab;
     public CharacterCombatRow CombatRow => _combatRow;
-    public CharacterPresencePresentationSettings SpawnPresentation => _spawnPresentation;
+    public CharacterPresencePresentationSettings SpawnPresentation =>  _spawnPresentation;
 
     public MinionConfig MinionConfig => _minionConfig;
     public float SummonCooldown => _summonCooldown;
@@ -44,6 +45,7 @@ public class SummonerConfig : ScriptableObject,
 
     public float MinionForwardOffset => _minionForwardOffset;
     public float MinionSideOffset => _minionSideOffset;
+    public float MinionNavMeshSampleDistance => _minionNavMeshSampleDistance;
 
     public float RetreatStepDistance => _retreatStepDistance;
 
