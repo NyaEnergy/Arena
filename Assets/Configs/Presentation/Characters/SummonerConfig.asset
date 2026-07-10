@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14a35d2dce95d74981e5719de761b16, type: 3}
+  m_Name: SummonerConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SummonerConfig
+  _maxHP: 95
+  _moveSpeed: 4.1
+  _prefab: {fileID: 5785257839737320030, guid: cfd61b839107e574d9ab8f6011a2f1fb, type: 3}
+  _combatRow: 2
+  _spawnPresentation:
+    _presenceType: 0
+    _enterEffectPrefab: {fileID: 0}
+    _exitEffectPrefab: {fileID: 0}
+    _presentationDuration: 0.5
+    _airHeight: 6
+    _offCameraPadding: 1.5
+    _maxEntrySearchDistance: 20
+    _minDistanceFromPressurePosition: 4
+    _maxPathLength: 35
+  _minionConfig: {fileID: 11400000, guid: 88d40f849308faf439662fa66a3aa04a, type: 2}
+  _summonCooldown: 3
+  _maxMinions: 3
+  _summonDistanceRange:
+    _value: {x: 4, y: 8}
+  _minionForwardOffset: 1.6
+  _minionSideOffset: 0.8
+  _retreatStepDistance: 2
+  _healthBarBackgroundColor: {r: 0.04, g: 0.04, b: 0.04, a: 0.85}
+  _healthBarFillColor: {r: 0.15, g: 0.75, b: 0.3, a: 1}

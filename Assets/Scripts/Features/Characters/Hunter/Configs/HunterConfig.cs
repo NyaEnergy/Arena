@@ -3,20 +3,24 @@ using UnityEngine;
 [CreateAssetMenu(
     menuName = "Configs/Characters/Hunter Config",
     fileName = "HunterConfig")]
-public class HunterConfig : ScriptableObject, ICharacterConfig {
+public class HunterConfig : ScriptableObject,
+                            ICharacterConfig {
     [Header("Base")]
     [SerializeField] private float _maxHP = 90f;
     [SerializeField] private float _moveSpeed = 4.5f;
+    [SerializeField] private HunterView _prefab;
+    [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Ranged;
+    [SerializeField] private CharacterPresencePresentationSettings _spawnPresentation;
 
     [Header("Ranged Combat")]
-    [SerializeField] private Range _rangedAttackDistanceRange = new(2.5f, 7f);
     [SerializeField] private float _rangedDamage = 18f;
     [SerializeField] private float _rangedAttackCooldown = 0.8f;
+    [SerializeField] private Range _rangedAttackDistanceRange = new(2.5f, 7f);
 
     [Header("Melee Combat")]
-    [SerializeField] private Range _meleeAttackDistanceRange = new(0f, 1.8f);
     [SerializeField] private float _meleeDamage = 22f;
     [SerializeField] private float _meleeAttackCooldown = 0.7f;
+    [SerializeField] private Range _meleeAttackDistanceRange = new(0f, 1.8f);
 
     [Header("Mode Switching")]
     [SerializeField] private Range _meleeModeSwitchRange = new(2.5f, 3.5f);
@@ -41,14 +45,17 @@ public class HunterConfig : ScriptableObject, ICharacterConfig {
 
     public float MaxHP => _maxHP;
     public float MoveSpeed => _moveSpeed;
+    public CharacterView Prefab => _prefab;
+    public CharacterCombatRow CombatRow => _combatRow;
+    public CharacterPresencePresentationSettings SpawnPresentation => _spawnPresentation;
 
-    public Range RangedAttackDistanceRange => _rangedAttackDistanceRange;
     public float RangedDamage => _rangedDamage;
     public float RangedAttackCooldown => _rangedAttackCooldown;
+    public Range RangedAttackDistanceRange => _rangedAttackDistanceRange;
 
-    public Range MeleeAttackDistanceRange => _meleeAttackDistanceRange;
     public float MeleeDamage => _meleeDamage;
     public float MeleeAttackCooldown => _meleeAttackCooldown;
+    public Range MeleeAttackDistanceRange => _meleeAttackDistanceRange;
 
     public Range MeleeModeSwitchRange => _meleeModeSwitchRange;
 

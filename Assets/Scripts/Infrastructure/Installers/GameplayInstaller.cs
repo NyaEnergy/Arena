@@ -1,5 +1,5 @@
-using Zenject;
 using UnityEngine;
+using Zenject;
 
 public class GameplayInstaller : MonoInstaller {
     [SerializeField] private Camera _camera;
@@ -7,8 +7,9 @@ public class GameplayInstaller : MonoInstaller {
     public override void InstallBindings() {
         Container.Bind<Camera>().FromInstance(_camera).AsSingle();
 
+        Container.Bind<CharacterDeathEventService>().AsSingle();
+
         Container.Bind<CharacterControllerFactory>().AsSingle();
-        Container.Bind<CharacterPrefabRegistry>().AsSingle();
         Container.Bind<BattlefieldRegistry>().AsSingle();
         Container.Bind<CharacterFactory>().AsSingle();
         Container.Bind<DetectionService>().AsSingle();

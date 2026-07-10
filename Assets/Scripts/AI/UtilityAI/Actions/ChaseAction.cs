@@ -9,7 +9,7 @@ public class ChaseAction : UtilityAction {
         ICharacterAttackConfig config =
             context.Self.Config as ICharacterAttackConfig;
 
-        if (context.CurrentTarget == null) return 0f;
+        if (config == null) return 0f;
 
         Range attackDistanceRange = config.AttackDistanceRange;
         float sqrMaximumAttackDistance = attackDistanceRange.Max *

@@ -3,10 +3,14 @@ using UnityEngine;
 [CreateAssetMenu(
     menuName = "Configs/Characters/Medic Config",
     fileName = "MedicConfig")]
-public class MedicConfig : ScriptableObject, ICharacterConfig {
+public class MedicConfig : ScriptableObject,
+                           ICharacterConfig {
     [Header("Base")]
     [SerializeField] private float _maxHP = 110f;
     [SerializeField] private float _moveSpeed = 4.6f;
+    [SerializeField] private MedicView _prefab;
+    [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Support;
+    [SerializeField] private CharacterPresencePresentationSettings _spawnPresentation;
 
     [Header("Combat")]
     [SerializeField] private float _damage = 16f;
@@ -34,6 +38,9 @@ public class MedicConfig : ScriptableObject, ICharacterConfig {
 
     public float MaxHP => _maxHP;
     public float MoveSpeed => _moveSpeed;
+    public CharacterView Prefab => _prefab;
+    public CharacterCombatRow CombatRow => _combatRow;
+    public CharacterPresencePresentationSettings SpawnPresentation => _spawnPresentation;
 
     public float Damage => _damage;
     public float AttackCooldown => _attackCooldown;

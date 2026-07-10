@@ -7,7 +7,6 @@ public class CharacterPool {
 
     private readonly DiContainer _container;
     private readonly CharacterConfigRegistry _configRegistry;
-    private readonly CharacterPrefabRegistry _prefabRegistry;
     private readonly CharacterControllerFactory _controllerFactory;
 
     private readonly Dictionary<CharacterKey, Queue<CharacterView>> _pools = new();
@@ -15,17 +14,13 @@ public class CharacterPool {
 
     public CharacterPool(DiContainer container,
                          CharacterConfigRegistry configRegistry,
-                         CharacterPrefabRegistry prefabRegistry,
                          CharacterControllerFactory controllerFactory) {
         _container = container;
         _configRegistry = configRegistry;
-        _prefabRegistry = prefabRegistry;
         _controllerFactory = controllerFactory;
     }
 
-    public void Warmup(CharacterKey key,
-                       int preloadCount) {
-
+    public void Warmup(CharacterKey key, int preloadCount) {
         if (preloadCount <= 0) return;
 
         Queue<CharacterView> pool = GetOrCreatePool(key);
@@ -39,9 +34,7 @@ public class CharacterPool {
         }
     }
 
-    public CharacterView Get(CharacterKey key,
-                             Vector3 position) {
-
+    public CharacterView Get(CharacterKey key, Vector3 position) {
         Queue<CharacterView> pool = GetOrCreatePool(key);
 
         if (pool.Count == 0) {
@@ -53,8 +46,7 @@ public class CharacterPool {
         CharacterView character = pool.Dequeue();
         _pooledCharacters.Remove(character);
 
-        character.transform
-            .SetPositionAndRotation(
+        character.transform.SetPositionAndRotation(
                 position, Quaternion.identity);
 
         character.OnSpawned();
@@ -63,7 +55,6 @@ public class CharacterPool {
     }
 
     public void Return(CharacterView character) {
-
         if (character == null) return;
         if (!_pooledCharacters.Add(character)) return;
 
@@ -83,33 +74,29 @@ public class CharacterPool {
         }
 
         pool = new Queue<CharacterView>();
-
         _pools.Add(key, pool);
-
         return pool;
     }
 
     private CharacterView CreateInstance(CharacterKey key) {
-
         ICharacterConfig config =
             _configRegistry.Get(key);
 
-        CharacterView prefab =
-            _prefabRegistry.Get(key);
+        if (config == null) return null;
 
-        if (config == null ||
-            prefab == null) {
+        CharacterView prefab = config.Prefab;
 
-            return null;
-        }
+        if (prefab == null) return null;
 
         CharacterView character =
-            _container.InstantiatePrefabForComponent<CharacterView>(prefab.gameObject);
+            _container.InstantiatePrefabForComponent<CharacterView>(prefab);
 
-        CharacterController controller = _controllerFactory.Create(
+        CharacterController controller =
+            _controllerFactory.Create(
                 character, key, config, Return);
 
-        if (controller == null || !character.Initialize(controller)) {
+        if (controller == null ||
+            !character.Initialize(controller)) {
 
             Object.Destroy(character.gameObject);
             return null;

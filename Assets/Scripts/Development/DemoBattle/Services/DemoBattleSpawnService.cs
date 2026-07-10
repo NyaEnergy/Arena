@@ -2,37 +2,32 @@ using System.Collections.Generic;
 using Zenject;
 
 public class DemoBattleSpawnService : IInitializable {
+    private readonly IReadOnlyList<DemoBattleSpawnEntry> _spawnEntries;
     private readonly CharacterFactory _characterFactory;
-    private readonly DemoBattleView _view;
 
-    public DemoBattleSpawnService(CharacterFactory characterFactory,
-                                  DemoBattleView view) {
+    public DemoBattleSpawnService(IReadOnlyList<DemoBattleSpawnEntry> spawnEntries,
+                                  CharacterFactory characterFactory) {
+        _spawnEntries = spawnEntries;
         _characterFactory = characterFactory;
-        _view = view;
     }
 
     public void Initialize() {
-        IReadOnlyList<DemoBattleSpawnEntry> spawnEntries = _view.SpawnEntries;
+        for (int i = 0; i < _spawnEntries.Count; i++) {
+            DemoBattleSpawnEntry spawnEntry = _spawnEntries[i];
 
-        for (int i = 0; i < spawnEntries.Count; i++) {
-            DemoBattleSpawnEntry entry = spawnEntries[i];
+            if (!spawnEntry.IsValid) continue;
 
-            if (entry == null || !entry.IsValid) continue;
+            CharacterKey characterKey =
+                new(spawnEntry.TeamType, spawnEntry.CharacterType);
 
-            Spawn(entry);
+            CharacterView character =
+                _characterFactory.Spawn(
+                    characterKey, spawnEntry.SpawnPoint.position);
+
+            if (character == null) continue;
+
+            character.transform.rotation =
+                spawnEntry.SpawnPoint.rotation;
         }
-    }
-
-    private void Spawn(DemoBattleSpawnEntry entry) {
-
-        CharacterKey characterKey = new(entry.TeamType, entry.CharacterType);
-
-        CharacterView character = _characterFactory.Spawn(
-                characterKey, entry.SpawnPoint.position);
-
-        if (character == null) return;
-
-        character.transform.rotation =
-            entry.SpawnPoint.rotation;
     }
 }

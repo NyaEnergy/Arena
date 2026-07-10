@@ -14,9 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VanguardConfig
   _maxHP: 220
   _moveSpeed: 4.2
+  _prefab: {fileID: 5163015799443259084, guid: 2ec2fd804681c734bb0f7f8b282613f5, type: 3}
+  _combatRow: 1
+  _spawnPresentation:
+    _presentationDuration: 0.5
+    _dropHeight: 6
+    _mapEdgeOffset: 2
+    _spawnEffectPrefab: {fileID: 0}
+    _spawnType: 0
+    _despawnType: 0
   _damage: 16
+  _attackCooldown: 1
   _attackDistanceRange:
     _value: {x: 0, y: 2.1}
-  _attackCooldown: 1
   _healthBarBackgroundColor: {r: 0.04, g: 0.04, b: 0.04, a: 0.85}
   _healthBarFillColor: {r: 0.15, g: 0.75, b: 0.3, a: 1}

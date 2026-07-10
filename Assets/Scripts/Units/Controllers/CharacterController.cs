@@ -8,6 +8,7 @@ public class CharacterController : IDisposable {
     private readonly CharacterAIController _aiController;
     private readonly BattlefieldRegistry _battlefieldRegistry;
     private readonly HealthBarRuntime _healthBarRuntime;
+    private readonly CharacterDeathEventService _deathEventService;
 
     private readonly Action<CharacterView> _returnToPool;
 
@@ -24,6 +25,7 @@ public class CharacterController : IDisposable {
                                CharacterAIController aiController,
                                BattlefieldRegistry battlefieldRegistry,
                                HealthBarRuntime healthBarRuntime,
+                               CharacterDeathEventService deathEventService,
                                Action<CharacterView> returnToPool) {
         _view = view;
         _characterKey = characterKey;
@@ -31,19 +33,29 @@ public class CharacterController : IDisposable {
         _aiController = aiController;
         _battlefieldRegistry = battlefieldRegistry;
         _healthBarRuntime = healthBarRuntime;
+        _deathEventService = deathEventService;
         _returnToPool = returnToPool;
     }
 
     public void Tick() {
         if (!_isSpawned ||
             !_isRegistered ||
-            _isReturningToPool) return;
+            _isReturningToPool) {
+
+            return;
+        }
 
         _aiController.Tick();
 
         if (!_brain.Runtime.IsDead.CurrentValue) return;
 
         _isReturningToPool = true;
+
+        CharacterDeathInfo deathInfo =
+            new(_characterKey, _view.transform.position);
+
+        _deathEventService.NotifyDeath(deathInfo);
+
         _returnToPool?.Invoke(_view);
     }
 
@@ -56,7 +68,7 @@ public class CharacterController : IDisposable {
         _view.ResetAnimationState();
 
         _brain.Reset();
-        
+
         _isSpawned = true;
     }
 
