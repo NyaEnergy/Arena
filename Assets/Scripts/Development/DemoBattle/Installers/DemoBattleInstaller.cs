@@ -3,17 +3,38 @@ using UnityEngine;
 using Zenject;
 
 public class DemoBattleInstaller : MonoInstaller {
-    [SerializeField] private List<DemoBattleSpawnEntry> _spawnEntries = new();
+    [Header("Call Points")]
+    [SerializeField] private Transform _allyCallPoint;
 
-    public IReadOnlyList<DemoBattleSpawnEntry> SpawnEntries => _spawnEntries;
+    [SerializeField] private Transform _enemyCallPoint;
+
+    [Header("Call Buttons")]
+    [SerializeField] private List<DemoBattleCallEntry> _callEntries = new();
 
     public override void InstallBindings() {
-        Container.Bind<IReadOnlyList<DemoBattleSpawnEntry>>().FromInstance(_spawnEntries).AsSingle();
+        BindCall();
+        BindCamera();
+    }
 
+    private void BindCall() {
+        Container.Bind<IReadOnlyList<DemoBattleCallEntry>>().FromInstance(_callEntries).AsSingle();
+
+        Container.Bind<DemoBattleCallPositionService>()
+            .FromInstance(new DemoBattleCallPositionService(_allyCallPoint,
+                                                            _enemyCallPoint))
+            .AsSingle();
+
+        Container.Bind<DemoBattleCallSpawnService>().AsSingle();
+        Container.BindInterfacesTo<DemoBattleCallService>().AsSingle();
+    }
+
+    private void BindCamera() {
         Container.Bind<DemoBattleCombatCenterService>().AsSingle();
-
-        Container.BindInterfacesTo<DemoBattleSpawnService>().AsSingle();
-        Container.BindInterfacesTo<DemoBattleAutoRespawnService>().AsSingle();
-        Container.BindInterfacesTo<DemoBattleCameraFollowService>().AsSingle();
+        Container.Bind<DemoBattleCameraFollowRuntime>().AsSingle();
+        Container.Bind<DemoBattleCameraSmoothingService>().AsSingle();
+        Container.Bind<DemoBattleCameraMovementService>().AsSingle();
+        Container.Bind<DemoBattleCameraRotationService>().AsSingle();
+        Container.Bind<DemoBattleCameraZoomService>().AsSingle();
+        Container.BindInterfacesTo <DemoBattleCameraFollowService>() .AsSingle();
     }
 }

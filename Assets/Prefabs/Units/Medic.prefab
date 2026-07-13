@@ -211,6 +211,7 @@ GameObject:
   - component: {fileID: 737130084334254144}
   - component: {fileID: 9217253976973064297}
   - component: {fileID: 8219227342370342018}
+  - component: {fileID: 618301290315403056}
   m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
@@ -313,6 +314,28 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &618301290315403056
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402873585090426036}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 91678bf62057c854cbae735d67428f11, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2506128152695286836
 GameObject:
   m_ObjectHideFlags: 0
@@ -5532,7 +5555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d192acdd1d80cc41a21f150e3200128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MedicView
-  _animator: {fileID: 0}
+  _animator: {fileID: 618301290315403056}
   _agent: {fileID: 8101784571116791004}
   _collider: {fileID: 8219227342370342018}
   _healthBarView: {fileID: 1436217967942176802}

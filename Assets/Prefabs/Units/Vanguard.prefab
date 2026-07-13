@@ -9951,6 +9951,7 @@ GameObject:
   - component: {fileID: 410683165474492923}
   - component: {fileID: 1195754884098840458}
   - component: {fileID: 5537736240276235628}
+  - component: {fileID: 4037993440107927379}
   m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
@@ -10053,6 +10054,28 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &4037993440107927379
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5141657575262966735}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 91678bf62057c854cbae735d67428f11, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5587208625124609098
 GameObject:
   m_ObjectHideFlags: 0
@@ -10195,7 +10218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f276c0144aa0e04eb8446865c4f95c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VanguardView
-  _animator: {fileID: 0}
+  _animator: {fileID: 4037993440107927379}
   _agent: {fileID: 8101784571116791004}
   _collider: {fileID: 5537736240276235628}
   _healthBarView: {fileID: 7216901562532414213}

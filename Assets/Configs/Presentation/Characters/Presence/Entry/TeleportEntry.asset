@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d40416c01c22d64f90e60148ecc5b7b, type: 3}
+  m_Name: TeleportEntry
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterTeleportPresenceConfig
+  _effectPrefab: {fileID: 8592118587068362661, guid: d755f5e97d5f60c47ad2b2fa5c0050fc, type: 3}

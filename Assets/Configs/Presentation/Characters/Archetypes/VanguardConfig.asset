@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd5c7150e6657a48b2df18239059621, type: 3}
+  m_Name: VanguardConfig
+  m_EditorClassIdentifier: Assembly-CSharp::VanguardConfig
+  _maxHP: 220
+  _moveSpeed: 4.2
+  _prefab: {fileID: 5163015799443259084, guid: 2ec2fd804681c734bb0f7f8b282613f5, type: 3}
+  _combatRow: 1
+  _entryPresentation: {fileID: 11400000, guid: 7d0b19dd489a1da45a2ac207182688a5, type: 2}
+  _exitPresentation: {fileID: 11400000, guid: 468a350cc0417034c95b431339925a9a, type: 2}
+  _damage: 16
+  _attackCooldown: 1
+  _attackDistanceRange:
+    _value: {x: 0, y: 2.1}
+  _healthBarBackgroundColor: {r: 0.04, g: 0.04, b: 0.04, a: 0.85}
+  _healthBarFillColor: {r: 0.15, g: 0.75, b: 0.3, a: 1}

@@ -60,6 +60,7 @@ GameObject:
   - component: {fileID: 737130084334254144}
   - component: {fileID: 9217253976973064297}
   - component: {fileID: 8219227342370342018}
+  - component: {fileID: 3166188790089912505}
   m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
@@ -75,7 +76,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1402873585090426036}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 0.7, y: 1, z: 0.7}
   m_ConstrainProportionsScale: 0
@@ -116,7 +117,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0dd49558975dc1842bd0e70f7f428b72, type: 2}
+  - {fileID: 2100000, guid: 1dadb79f6b3ffc54f8bac7d914f776db, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -163,6 +164,28 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &3166188790089912505
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402873585090426036}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 91678bf62057c854cbae735d67428f11, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2506128152695286836
 GameObject:
   m_ObjectHideFlags: 0
@@ -10390,7 +10413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0deec130808a32249a0068e0bc9f9604, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SummonerView
-  _animator: {fileID: 0}
+  _animator: {fileID: 3166188790089912505}
   _agent: {fileID: 8101784571116791004}
   _collider: {fileID: 8219227342370342018}
   _healthBarView: {fileID: 1436217967942176802}
