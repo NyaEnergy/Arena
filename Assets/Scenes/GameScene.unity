@@ -1892,7 +1892,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameplayConfigsInstaller
   _deathPresentationConfig: {fileID: 11400000, guid: 27ab6e4addf720240bca420744936df5, type: 2}
-  _healthBarPalette: {fileID: 0}
+  _healthBarPalette: {fileID: 11400000, guid: 858ae06a96f75f1489972026b80d7b2b, type: 2}
 --- !u!4 &899839431
 Transform:
   m_ObjectHideFlags: 0
@@ -2547,7 +2547,7 @@ Transform:
   m_GameObject: {fileID: 1329442969}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 3, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2924,7 +2924,7 @@ Transform:
   m_GameObject: {fileID: 1504203473}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -3, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
