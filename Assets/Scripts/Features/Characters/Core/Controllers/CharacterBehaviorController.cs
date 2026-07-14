@@ -4,27 +4,31 @@ public class CharacterBehaviorController {
     private readonly CharacterBrain _brain;
     private readonly DetectionService _detectionService;
     private readonly UtilityAIService _utilityAIService;
+    private readonly CharacterGroupService _groupService;
     private readonly ICharacterBehavior _behavior;
+
     private readonly CharacterStateMachine _stateMachine;
-    private readonly AIContext _context;
+
+    private readonly AIContext _context = new();
+    private readonly CharacterGroupRuntime _groupRuntime = new();
 
     public CharacterBehaviorController(CharacterBrain brain,
                                        DetectionService detectionService,
                                        UtilityAIService utilityAIService,
+                                       CharacterGroupService groupService,
                                        ICharacterBehavior behavior) {
         _brain = brain;
         _detectionService = detectionService;
         _utilityAIService = utilityAIService;
+        _groupService = groupService;
         _behavior = behavior;
 
-        _context = new AIContext();
-
         _stateMachine = new CharacterStateMachine(
-            new IdleState(brain),
-            new MoveState(brain),
-            new AttackState(brain),
-            new RetreatState(brain),
-            new DeadState(brain)
+                new IdleState(brain),
+                new MoveState(brain),
+                new AttackState(brain),
+                new RetreatState(brain),
+                new DeadState(brain)
         );
 
         Reset();
@@ -33,6 +37,7 @@ public class CharacterBehaviorController {
     public void Reset() {
         _brain.TargetComponent.ClearTarget();
         _context.Reset();
+        _groupRuntime.Reset();
         _behavior?.Reset();
 
         _stateMachine.Reset(CharacterStateType.Idle);
@@ -43,6 +48,9 @@ public class CharacterBehaviorController {
             _stateMachine.SetState(CharacterStateType.Dead);
             return;
         }
+
+        if (_groupService.Tick(_brain, _groupRuntime))
+            return;
 
         if (_behavior != null) {
             _behavior.Tick();
@@ -67,11 +75,14 @@ public class CharacterBehaviorController {
         _context.Self = _brain;
         _context.CurrentTarget = target;
 
-        _context.CurrentHpPercent = _brain.Runtime.CurrentHP.CurrentValue /
-                                    _brain.Config.MaxHP;
+        _context.CurrentHpPercent =
+            _brain.Runtime.CurrentHP.CurrentValue /
+            _brain.Config.MaxHP;
 
         if (target == null) {
-            _context.SqrDistanceToTarget = float.MaxValue;
+            _context.SqrDistanceToTarget =
+                float.MaxValue;
+
             return;
         }
 

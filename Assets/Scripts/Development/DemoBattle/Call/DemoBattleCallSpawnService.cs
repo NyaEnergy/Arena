@@ -14,9 +14,14 @@ public class DemoBattleCallSpawnService {
 
     public void Spawn(DemoBattleCallEntry entry) {
         if (entry == null ||
-           !entry.IsValid) return;
+            !entry.IsValid)
+                return;
 
-        CharacterView view = Create(entry);
+        if (!_positionService.TryGetPosition(
+                entry.TeamType, out UnityEngine.Vector3 position))
+                    return;
+
+        CharacterView view = Create(entry, position);
 
         if (view == null) return;
 
@@ -25,10 +30,9 @@ public class DemoBattleCallSpawnService {
                 entry.TeamType);
     }
 
-    private CharacterView Create(DemoBattleCallEntry entry) {
-        var position = _positionService.GetPosition(
-                entry.TeamType);
-
+    private CharacterView Create(DemoBattleCallEntry entry,
+                                 UnityEngine.Vector3 position) {
+        
         if (entry.CallType == DemoBattleCallType.Summoner) {
             return _summonerFactory.Spawn(
                 entry.TeamType,
@@ -38,9 +42,9 @@ public class DemoBattleCallSpawnService {
 
         CharacterKey key = new(
                 entry.TeamType,
-                entry.CharacterType);
+                entry.CharacterType
+        );
 
-        return _characterFactory.Spawn(
-            key, position);
+        return _characterFactory.Spawn(key, position);
     }
 }

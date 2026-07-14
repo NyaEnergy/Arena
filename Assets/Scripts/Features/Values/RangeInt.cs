@@ -3,12 +3,14 @@ using UnityEngine;
 
 [Serializable]
 public struct RangeInt {
-    [SerializeField] private Vector2 _value;
+    [SerializeField] private int _min;
+    [SerializeField] private int _max;
 
-    public float Min => Mathf.Min(_value.x, _value.y);
-    public float Max => Mathf.Max(_value.x, _value.y);
+    public int Min => _min;
+    public int Max => _max;
 
-    public RangeInt(float min, float max) {
-        _value = new Vector2(min, max);
+    public RangeInt(int min, int max) {
+        _min = min;
+        _max = max;
     }
 }

@@ -5,11 +5,11 @@ public class CharacterOffCameraEnterService {
     private readonly CharacterCameraVisibilityService _visibilityService;
 
     public CharacterOffCameraEnterService(
-            CharacterOffCameraPositionService positionService,
-            CharacterNavRouteService routeService,
-            CharacterOffCameraFallbackService fallbackService,
-            CharacterCameraVisibilityService visibilityService) {
-        
+                CharacterOffCameraPositionService positionService,
+                CharacterNavRouteService routeService,
+                CharacterOffCameraFallbackService fallbackService,
+                CharacterCameraVisibilityService visibilityService) {
+
         _positionService = positionService;
         _routeService = routeService;
         _fallbackService = fallbackService;
@@ -21,12 +21,12 @@ public class CharacterOffCameraEnterService {
                       CharacterPresenceTransitionRuntime runtime,
                       CharacterPresenceTransitionRequest request) {
 
-        if (!_positionService.TryGet(
-                view, config,
-                request.EndPosition,
-                CharacterPresenceTransitionDirection.Enter,
-                out CharacterOffCameraPoint point)) {
+        view.HidePresentation();
 
+        if (!_positionService.TryGet(view, config,
+                                     request.EndPosition,
+                                     CharacterPresenceTransitionDirection.Enter,
+                                     out CharacterOffCameraPoint point)) {
             return Teleport(view, config, request,
                             request.EndPosition);
         }
@@ -36,12 +36,15 @@ public class CharacterOffCameraEnterService {
                             point.Position);
         }
 
-        if (!_routeService.BeginAt(view, point.Position,
+        if (!_routeService.BeginAt(view,
+                                   point.Position,
                                    request.EndPosition)) {
-
+            
             return Teleport(view, config, request,
-                request.EndPosition);
+                            request.EndPosition);
         }
+
+        view.ShowPresentation();
 
         runtime.Begin(config, request,
                       request.EndPosition);
@@ -53,20 +56,15 @@ public class CharacterOffCameraEnterService {
                      CharacterPresenceTransitionRuntime runtime) {
 
         if (_visibilityService.IsVisible(
-                view, view.transform.position)) {
+                view, view.transform.position))
+                    return Complete(view, runtime);
 
-            return Complete(view, runtime);
-        }
+        CharacterNavRouteState state = _routeService.Tick(view);
 
-        CharacterNavRouteState state =
-            _routeService.Tick(view);
-
-        if (state == CharacterNavRouteState.Running) {
+        if (state == CharacterNavRouteState.Running)
             return false;
-        }
 
         if (state == CharacterNavRouteState.Failed) {
-
             CharacterOffCameraRoutePresenceConfig config =
                 runtime.Config as CharacterOffCameraRoutePresenceConfig;
 
@@ -80,7 +78,7 @@ public class CharacterOffCameraEnterService {
 
     public void Cancel(CharacterView view,
                        CharacterPresenceTransitionRuntime runtime) {
-        
+
         _routeService.Cancel(view);
         runtime?.Reset();
     }
@@ -90,8 +88,12 @@ public class CharacterOffCameraEnterService {
                           CharacterPresenceTransitionRequest request,
                           UnityEngine.Vector3 position) {
         
-        _fallbackService.Play(view, config, request, position);
+        view.ShowPresentation();
 
+        _fallbackService.Play(view,
+                              config,
+                              request,
+                              position);
         return true;
     }
 
@@ -100,7 +102,6 @@ public class CharacterOffCameraEnterService {
         
         _routeService.Cancel(view);
         runtime.Complete();
-
         return true;
     }
 }

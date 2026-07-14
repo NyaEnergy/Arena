@@ -10,19 +10,20 @@ public class CharacterLifecycleFactory {
     private readonly CharacterCombatPresenceService _combatPresenceService;
     private readonly CharacterDeathPresentationService _deathService;
     private readonly HealthBarPaletteConfig _healthBarPalette;
+    private readonly CharacterGroupService _groupService;
     private readonly List<ICharacterBehaviorFactory> _behaviorFactories;
     private readonly Camera _camera;
 
-    public CharacterLifecycleFactory(
-                BattlefieldRegistry battlefieldRegistry,
-                DetectionService detectionService,
-                UtilityAIService utilityAIService,
-                CharacterPresenceTransitionService transitionService,
-                CharacterCombatPresenceService combatPresenceService,
-                CharacterDeathPresentationService deathService,
-                HealthBarPaletteConfig healthBarPalette,
-                List<ICharacterBehaviorFactory> behaviorFactories,
-                Camera camera) {
+    public CharacterLifecycleFactory(BattlefieldRegistry battlefieldRegistry,
+                                     DetectionService detectionService,
+                                     UtilityAIService utilityAIService,
+                                     CharacterPresenceTransitionService transitionService,
+                                     CharacterCombatPresenceService combatPresenceService,
+                                     CharacterDeathPresentationService deathService,
+                                     HealthBarPaletteConfig healthBarPalette,
+                                     CharacterGroupService groupService,
+                                     List<ICharacterBehaviorFactory> behaviorFactories,
+                                     Camera camera) {
 
         _battlefieldRegistry = battlefieldRegistry;
         _detectionService = detectionService;
@@ -31,6 +32,7 @@ public class CharacterLifecycleFactory {
         _combatPresenceService = combatPresenceService;
         _deathService = deathService;
         _healthBarPalette = healthBarPalette;
+        _groupService = groupService;
         _behaviorFactories = behaviorFactories;
         _camera = camera;
     }
@@ -54,11 +56,11 @@ public class CharacterLifecycleFactory {
             new(brain,
                 _detectionService,
                 _utilityAIService,
+                _groupService,
                 CreateBehavior(brain));
 
         CharacterBattlefieldPresenceController presenceController =
-            new(view,
-                brain,
+            new(view, brain,
                 _battlefieldRegistry,
                 _transitionService,
                 _combatPresenceService);
@@ -77,8 +79,7 @@ public class CharacterLifecycleFactory {
         
         for (int i = 0; i < _behaviorFactories.Count; i++) {
 
-            ICharacterBehaviorFactory factory =
-                _behaviorFactories[i];
+            ICharacterBehaviorFactory factory = _behaviorFactories[i];
 
             if (factory != null &&
                 factory.CanCreate(brain))
@@ -93,9 +94,8 @@ public class CharacterLifecycleFactory {
 
         if (view.HealthBarView == null) return null;
 
-        Transform cameraTransform =
-            _camera != null ?
-            _camera.transform : null;
+        Transform cameraTransform = _camera != null ?
+                                    _camera.transform : null;
 
         return new HealthBarRuntime(brain,
                                     view.HealthBarView,

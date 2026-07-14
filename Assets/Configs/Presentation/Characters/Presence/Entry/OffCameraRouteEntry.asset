@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: OffCameraRouteEntry
   m_EditorClassIdentifier: Assembly-CSharp::CharacterOffCameraRoutePresenceConfig
   _fallbackTeleport: {fileID: 11400000, guid: 7d0b19dd489a1da45a2ac207182688a5, type: 2}
-  _offCameraPadding: 1.5
-  _maxSearchDistance: 20
-  _minSearchDistance: 4
+  _offCameraPadding: 0.75
   _maxPathLength: 35
+  _searchDistance:
+    _min: 4
+    _max: 20

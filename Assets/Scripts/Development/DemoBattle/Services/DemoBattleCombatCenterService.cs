@@ -2,10 +2,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DemoBattleCombatCenterService {
-    private readonly BattlefieldRegistry _battlefieldRegistry;
+    private const float ALLY_RADIUS = 8f;
+    private const float ENGAGEMENT_RADIUS = 11f;
+    private const float ENEMY_GROUP_RADIUS = 8f;
+    private const float MAX_CAMERA_RADIUS = 9f;
 
-    public DemoBattleCombatCenterService(BattlefieldRegistry battlefieldRegistry) {
-        _battlefieldRegistry = battlefieldRegistry;
+    private readonly BattlefieldRegistry _registry;
+    private readonly CharacterTeamService _teamService;
+    private readonly CharacterAnchorService _anchorService;
+
+    private readonly List<Vector3> _positions = new();
+
+    public DemoBattleCombatCenterService(
+                BattlefieldRegistry registry,
+                CharacterTeamService teamService,
+                CharacterAnchorService anchorService) {
+
+        _registry = registry;
+        _teamService = teamService;
+        _anchorService = anchorService;
     }
 
     public bool TryGetCenter(out Vector3 center) {
@@ -14,92 +29,87 @@ public class DemoBattleCombatCenterService {
 
     public bool TryGetCenterAndRadius(out Vector3 center,
                                       out float radius) {
-        Vector3 sum = Vector3.zero;
-        int count = 0;
+        _positions.Clear();
 
-        IReadOnlyList<CharacterBrain> allies =
-            _battlefieldRegistry.GetAllies(TeamType.Ally);
+        if (_anchorService.TryGet(TeamType.Ally,
+                out CharacterBrain allyAnchor)) {
 
-        IReadOnlyList<CharacterBrain> enemies =
-            _battlefieldRegistry.GetEnemies(TeamType.Ally);
+            Vector3 anchor =
+                allyAnchor.View.transform.position;
 
-        AddCharacters(allies, ref sum, ref count);
-        AddCharacters(enemies, ref sum, ref count);
+            AddNearby(_registry.GetAllies(TeamType.Ally),
+                anchor, ALLY_RADIUS);
 
-        if (count <= 0) {
+            AddNearby(_registry.GetEnemies(TeamType.Ally),
+                anchor, ENGAGEMENT_RADIUS);
+
+        } else if (_anchorService.TryGet(TeamType.Enemy,
+                       out CharacterBrain enemyAnchor)) {
+            AddNearby(_registry.GetAllies(TeamType.Enemy),
+                      enemyAnchor.View.transform.position,
+                      ENEMY_GROUP_RADIUS);
+        }
+
+        if (_positions.Count == 0) {
             center = Vector3.zero;
             radius = 0f;
             return false;
         }
 
-        center = sum / count;
-        radius = CalculateRadius(center, allies, enemies);
+        center = CalculateCenter();
+
+        radius = Mathf.Min(CalculateRadius(center),
+                           MAX_CAMERA_RADIUS);
 
         return true;
     }
 
-    private void AddCharacters(IReadOnlyList<CharacterBrain> characters,
-                               ref Vector3 sum,
-                               ref int count) {
-        for (int i = 0; i < characters.Count; i++) {
-            CharacterBrain character =
-                characters[i];
+    private void AddNearby(IReadOnlyList<CharacterBrain> characters,
+                           Vector3 anchor,
+                           float maximumDistance) {
 
-            if (!CanUseCharacter(character)) continue;
-
-            sum += character.View.transform.position;
-            count++;
-        }
-    }
-
-    private float CalculateRadius(Vector3 center,
-                                  IReadOnlyList<CharacterBrain> allies,
-                                  IReadOnlyList<CharacterBrain> enemies) {
-        float maxSqrDistance = 0f;
-
-        maxSqrDistance =
-            GetMaxSqrDistance(center, allies, maxSqrDistance);
-
-        maxSqrDistance =
-            GetMaxSqrDistance(center, enemies, maxSqrDistance);
-
-        return Mathf.Sqrt(maxSqrDistance);
-    }
-
-    private float GetMaxSqrDistance(Vector3 center,
-                                    IReadOnlyList<CharacterBrain> characters,
-                                    float currentMaxSqrDistance) {
-        float maxSqrDistance = currentMaxSqrDistance;
+        float maximumSqrDistance = maximumDistance * maximumDistance;
 
         for (int i = 0; i < characters.Count; i++) {
             CharacterBrain character = characters[i];
 
-            if (!CanUseCharacter(character)) continue;
+            if (!_teamService.IsAlive(character))
+                continue;
 
-            Vector3 position =
-                character.View.transform.position;
+            Vector3 position = character.View.transform.position;
 
-            position.y = center.y;
+            Vector3 difference = position - anchor;
+            difference.y = 0f;
 
-            float sqrDistance =
-                Vector3.SqrMagnitude(position - center);
-
-            if (sqrDistance > maxSqrDistance) {
-                maxSqrDistance = sqrDistance;
+            if (difference.sqrMagnitude <= maximumSqrDistance) {
+                _positions.Add(position);
             }
         }
-
-        return maxSqrDistance;
     }
 
-    private bool CanUseCharacter(CharacterBrain character) {
-        if (character == null ||
-            character.View == null ||
-            character.Runtime == null) {
+    private Vector3 CalculateCenter() {
+        Vector3 sum = Vector3.zero;
 
-            return false;
+        for (int i = 0; i < _positions.Count; i++) {
+            sum += _positions[i];
         }
 
-        return !character.Runtime.IsDead.CurrentValue;
+        return sum / _positions.Count;
+    }
+
+    private float CalculateRadius(Vector3 center) {
+        float maximumSqrDistance = 0f;
+
+        for (int i = 0; i < _positions.Count; i++) {
+            Vector3 difference = _positions[i] - center;
+
+            difference.y = 0f;
+
+            maximumSqrDistance =
+                Mathf.Max(maximumSqrDistance,
+                          difference.sqrMagnitude);
+        }
+
+        return Mathf.Sqrt(maximumSqrDistance);
     }
 }
