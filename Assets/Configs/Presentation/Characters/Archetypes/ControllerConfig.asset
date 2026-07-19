@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1103ace966942b74d95f530de466f355, type: 3}
+  m_Name: ControllerConfig
+  m_EditorClassIdentifier: Assembly-CSharp::ControllerConfig
+  _maxHP: 105
+  _moveSpeed: 4.2
+  _prefab: {fileID: 3850065084619984415, guid: 631d703f25e0d6f49b75ac4bcd7980d3, type: 3}
+  _combatRow: 3
+  _entryPresentation: {fileID: 11400000, guid: 7d0b19dd489a1da45a2ac207182688a5, type: 2}
+  _exitPresentation: {fileID: 11400000, guid: 468a350cc0417034c95b431339925a9a, type: 2}
+  _controlDistanceRange:
+    _min: 4
+    _max: 7
+  _retreatStepDistance: 2
+  _fieldPrefab: {fileID: 8981211575202173504, guid: d7313948eca959d499e10ebeff1b63de, type: 3}
+  _fieldRadius: 3
+  _fieldDuration: 4
+  _fieldCooldown: 6
+  _slowMultiplier: 0.5
+  _allyFieldColor: {r: 0.15, g: 0.9, b: 1, a: 0.3}
+  _enemyFieldColor: {r: 1, g: 0.15, b: 0.3, a: 0.3}

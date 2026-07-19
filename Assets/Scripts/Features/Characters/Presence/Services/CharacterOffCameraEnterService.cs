@@ -100,7 +100,6 @@ public class CharacterOffCameraEnterService {
     private bool Complete(CharacterView view,
                           CharacterPresenceTransitionRuntime runtime) {
         
-        _routeService.Cancel(view);
         runtime.Complete();
         return true;
     }

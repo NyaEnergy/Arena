@@ -3,32 +3,27 @@ using Zenject;
 
 public class DemoBattleCameraFollowService : IInitializable,
                                              ILateTickable {
-    private const float DEFAULT_OFFSET_Y = 12f;
-    private const float DEFAULT_OFFSET_Z = -10f;
-    private const float FOCUS_HEIGHT = 1.2f;
-    private const float MIN_OFFSET_SQR_MAGNITUDE = 0.01f;
+    private const float DEFAULT_FOCUS_DISTANCE = 14f;
+    private const float MIN_FOCUS_DISTANCE = 1f;
 
     private readonly Camera _camera;
     private readonly DemoBattleCombatCenterService _combatCenterService;
     private readonly DemoBattleCameraFollowRuntime _runtime;
     private readonly DemoBattleCameraSmoothingService _smoothingService;
     private readonly DemoBattleCameraMovementService _movementService;
-    private readonly DemoBattleCameraRotationService _rotationService;
     private readonly DemoBattleCameraZoomService _zoomService;
 
     public DemoBattleCameraFollowService(Camera camera,
-                                         DemoBattleCombatCenterService combatCenterService,
-                                         DemoBattleCameraFollowRuntime runtime,
-                                         DemoBattleCameraSmoothingService smoothingService,
-                                         DemoBattleCameraMovementService movementService,
-                                         DemoBattleCameraRotationService rotationService,
-                                         DemoBattleCameraZoomService zoomService) {
+                DemoBattleCombatCenterService combatCenterService,
+                DemoBattleCameraFollowRuntime runtime,
+                DemoBattleCameraSmoothingService smoothingService,
+                DemoBattleCameraMovementService movementService,
+                DemoBattleCameraZoomService zoomService) {
         _camera = camera;
         _combatCenterService = combatCenterService;
         _runtime = runtime;
         _smoothingService = smoothingService;
         _movementService = movementService;
-        _rotationService = rotationService;
         _zoomService = zoomService;
     }
 
@@ -40,9 +35,8 @@ public class DemoBattleCameraFollowService : IInitializable,
 
         InitializeOffset(center);
 
-        _smoothingService.Initialize(_runtime,
-                                     center,
-                                     radius);
+        _smoothingService.Initialize(
+            _runtime, center, radius);
     }
 
     public void LateTick() {
@@ -55,26 +49,13 @@ public class DemoBattleCameraFollowService : IInitializable,
             InitializeOffset(center);
         }
 
-        _smoothingService.Update(_runtime,
-                                 center,
-                                 radius);
-
-        Vector3 focusPoint = _runtime.SmoothedCenter +
-                             Vector3.up * FOCUS_HEIGHT;
+        _smoothingService.Update(_runtime, center, radius);
 
         Vector3 targetPosition = _runtime.SmoothedCenter +
                                  _runtime.CameraOffset;
 
-        _movementService.Move(_camera,
-                               targetPosition,
-                              _runtime);
-
-        _rotationService.Rotate(_camera,
-                                 focusPoint);
-
-        _zoomService.UpdateZoom(_camera,
-                                _runtime.SmoothedRadius,
-                                _runtime);
+        _movementService.Move(_camera, targetPosition, _runtime);
+        _zoomService.UpdateZoom(_camera, _runtime.SmoothedRadius, _runtime);
     }
 
     private bool TryGetCombatData(out Vector3 center,
@@ -85,19 +66,29 @@ public class DemoBattleCameraFollowService : IInitializable,
             return false;
         }
 
-        return _combatCenterService.TryGetCenterAndRadius(
-                out center, out radius);
+        return _combatCenterService
+            .TryGetCenterAndRadius(out center, out radius);
     }
 
     private void InitializeOffset(Vector3 center) {
-        Vector3 offset = _camera.transform.position - center;
+        Vector3 toCenter = center -
+                           _camera.transform.position;
 
-        if (offset.sqrMagnitude < MIN_OFFSET_SQR_MAGNITUDE) {
-            offset = new Vector3(0f, DEFAULT_OFFSET_Y,
-                                     DEFAULT_OFFSET_Z);
+        float distance = Vector3.Dot(
+                toCenter, _camera.transform.forward);
+
+        if (distance < MIN_FOCUS_DISTANCE) {
+            distance = toCenter.magnitude;
         }
 
-        _runtime.CameraOffset = offset;
+        if (distance < MIN_FOCUS_DISTANCE) {
+            distance = DEFAULT_FOCUS_DISTANCE;
+        }
+
+        _runtime.CameraOffset =
+            -_camera.transform.forward.normalized *
+             distance;
+
         _runtime.HasOffset = true;
     }
 }

@@ -21,6 +21,5 @@ MonoBehaviour:
   _damage: 16
   _attackCooldown: 1
   _attackDistanceRange:
-    _value: {x: 0, y: 2.1}
-  _healthBarBackgroundColor: {r: 0.04, g: 0.04, b: 0.04, a: 0.85}
-  _healthBarFillColor: {r: 0.15, g: 0.75, b: 0.3, a: 1}
+    _min: 0
+    _max: 2.1

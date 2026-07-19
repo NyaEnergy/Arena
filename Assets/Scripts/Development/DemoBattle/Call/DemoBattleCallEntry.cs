@@ -23,8 +23,7 @@ public class DemoBattleCallEntry {
                 return _summonerConfig != null;
             }
 
-            return _characterType != CharacterType.Controller &&
-                   _characterType != CharacterType.Summoner &&
+            return _characterType != CharacterType.Summoner &&
                    _characterType != CharacterType.EliteCommander;
         }
     }

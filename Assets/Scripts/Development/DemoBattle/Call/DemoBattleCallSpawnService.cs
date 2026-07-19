@@ -1,50 +1,29 @@
 public class DemoBattleCallSpawnService {
-    private readonly CharacterFactory _characterFactory;
-    private readonly SummonerFactory _summonerFactory;
-    private readonly DemoBattleCallPositionService _positionService;
+    private readonly CharacterDeploymentService _deploymentService;
 
-    public DemoBattleCallSpawnService(CharacterFactory characterFactory,
-                                      SummonerFactory summonerFactory,
-                                      DemoBattleCallPositionService positionService) {
-
-        _characterFactory = characterFactory;
-        _summonerFactory = summonerFactory;
-        _positionService = positionService;
+    public DemoBattleCallSpawnService(CharacterDeploymentService deploymentService) {
+        _deploymentService = deploymentService;
     }
 
-    public void Spawn(DemoBattleCallEntry entry) {
+    public void Spawn(
+        DemoBattleCallEntry entry) {
         if (entry == null ||
-            !entry.IsValid)
-                return;
-
-        if (!_positionService.TryGetPosition(
-                entry.TeamType, out UnityEngine.Vector3 position))
-                    return;
-
-        CharacterView view = Create(entry, position);
-
-        if (view == null) return;
-
-        view.transform.rotation =
-            _positionService.GetRotation(
-                entry.TeamType);
-    }
-
-    private CharacterView Create(DemoBattleCallEntry entry,
-                                 UnityEngine.Vector3 position) {
-        
-        if (entry.CallType == DemoBattleCallType.Summoner) {
-            return _summonerFactory.Spawn(
-                entry.TeamType,
-                entry.SummonerConfig,
-                position);
+            !entry.IsValid) {
+            return;
         }
 
-        CharacterKey key = new(
-                entry.TeamType,
-                entry.CharacterType
-        );
+        CharacterDeploymentRequest request = CreateRequest(entry);
 
-        return _characterFactory.Spawn(key, position);
+        _deploymentService.Deploy(request);
+    }
+
+    private CharacterDeploymentRequest CreateRequest(DemoBattleCallEntry entry) {
+        if (entry.CallType == DemoBattleCallType.Summoner) {
+            return CharacterDeploymentRequest.ForSummoner(
+                entry.TeamType, entry.SummonerConfig);
+        }
+
+        return CharacterDeploymentRequest.ForCharacter(
+            entry.TeamType, entry.CharacterType);
     }
 }

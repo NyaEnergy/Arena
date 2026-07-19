@@ -16,11 +16,10 @@ MonoBehaviour:
   _moveSpeed: 5.2
   _prefab: {fileID: 3814917829221811604, guid: 4ecfae9644bce36408cd43d0e7216a8b, type: 3}
   _combatRow: 1
-  _entryPresentation: {fileID: 11400000, guid: 7d0b19dd489a1da45a2ac207182688a5, type: 2}
+  _entryPresentation: {fileID: 11400000, guid: 3e665498dbf5ffd4e96eedda298221cf, type: 2}
   _exitPresentation: {fileID: 11400000, guid: 468a350cc0417034c95b431339925a9a, type: 2}
   _damage: 8
   _attackCooldown: 0.9
   _attackDistanceRange:
-    _value: {x: 0, y: 1.3}
-  _healthBarBackgroundColor: {r: 0.04, g: 0.04, b: 0.04, a: 0.85}
-  _healthBarFillColor: {r: 0.15, g: 0.75, b: 0.3, a: 1}
+    _min: 0
+    _max: 1.3

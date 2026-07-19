@@ -16,22 +16,23 @@ MonoBehaviour:
   _moveSpeed: 4.7
   _prefab: {fileID: 1503560794414281780, guid: 2ff2bb0208f721e468970511cf49cd81, type: 3}
   _combatRow: 3
-  _entryPresentation: {fileID: 11400000, guid: 7d0b19dd489a1da45a2ac207182688a5, type: 2}
+  _entryPresentation: {fileID: 11400000, guid: fa1f0ac9626270641a47a3ead1ea5876, type: 2}
   _exitPresentation: {fileID: 11400000, guid: 468a350cc0417034c95b431339925a9a, type: 2}
   _damage: 18
   _attackCooldown: 0.9
   _attackDistanceRange:
-    _value: {x: 0, y: 7.5}
+    _min: 0
+    _max: 9
   _healingPerSecond: 12
   _healingDistance: 3.5
   _supportDistance: 1.4
   _emergencySwitchDelta: 0.05
   _emergencyHealthRange:
-    _value: {x: 0.15, y: 0.35}
+    _min: 0.15
+    _max: 0.35
   _criticalHealthRange:
-    _value: {x: 0.4, y: 0.65}
-  _healthBarBackgroundColor: {r: 0.04, g: 0.04, b: 0.04, a: 0.85}
-  _healthBarFillColor: {r: 0.15, g: 0.75, b: 0.3, a: 1}
+    _min: 0.4
+    _max: 0.65
   _lineOfSightBlockingLayers:
     serializedVersion: 2
     m_Bits: 768

@@ -29,6 +29,9 @@ public class GameplayInstaller : MonoInstaller {
         Container.Bind<CharacterLifecycleFactory>().AsSingle();
         Container.Bind<CharacterPool>().AsSingle();
         Container.Bind<CharacterFactory>().AsSingle();
+
+        Container.Bind<CharacterDeploymentPositionService>().AsSingle();
+        Container.Bind<CharacterDeploymentService>().AsSingle();
     }
 
     private void BindPresence() {

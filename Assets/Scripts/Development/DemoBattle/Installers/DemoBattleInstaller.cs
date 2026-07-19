@@ -13,7 +13,6 @@ public class DemoBattleInstaller : MonoInstaller {
     private void BindCall() {
         Container.Bind<IReadOnlyList<DemoBattleCallEntry>>().FromInstance(_callEntries).AsSingle();
         Container.BindInterfacesTo<DemoBattleCallService>().AsSingle();
-        Container.Bind<DemoBattleCallPositionService>().AsSingle();
         Container.Bind<DemoBattleCallSpawnService>().AsSingle();
     }
 
@@ -22,8 +21,7 @@ public class DemoBattleInstaller : MonoInstaller {
         Container.Bind<DemoBattleCameraFollowRuntime>().AsSingle();
         Container.Bind<DemoBattleCameraSmoothingService>().AsSingle();
         Container.Bind<DemoBattleCameraMovementService>().AsSingle();
-        Container.Bind<DemoBattleCameraRotationService>().AsSingle();
         Container.Bind<DemoBattleCameraZoomService>().AsSingle();
-        Container.BindInterfacesTo <DemoBattleCameraFollowService>() .AsSingle();
+        Container.BindInterfacesTo <DemoBattleCameraFollowService>().AsSingle();
     }
 }
