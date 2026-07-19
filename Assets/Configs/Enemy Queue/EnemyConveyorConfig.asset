@@ -17,16 +17,16 @@ MonoBehaviour:
   _entries:
   - _characterType: 4
     _summonerConfig: {fileID: 0}
-    _icon: {fileID: 1213530842, guid: 83baac726b4d6e744984682c10ee41a1, type: 3}
+    _icon: {fileID: 1095813865, guid: dbf2550b9c81de64485e2ff0c6328f48, type: 3}
   - _characterType: 1
     _summonerConfig: {fileID: 0}
-    _icon: {fileID: -79926077, guid: 9dc6c5a7fd501494781be9ba5d82d577, type: 3}
+    _icon: {fileID: 1931860747, guid: f75a0523b02f48b4693a3e32761cae45, type: 3}
   - _characterType: 0
     _summonerConfig: {fileID: 0}
-    _icon: {fileID: -1213651909, guid: 023244a73a495af4c9b53d92bd2b25b9, type: 3}
+    _icon: {fileID: -835835958, guid: be8ba19898c852e4d8fe684390ae6a02, type: 3}
   - _characterType: 3
     _summonerConfig: {fileID: 11400000, guid: 618cb1c3cb3133e4f96add10752330ed, type: 2}
-    _icon: {fileID: 334884052, guid: 082d4c83ac6483d4b93f61e92bc658ca, type: 3}
+    _icon: {fileID: 1898084530, guid: f1c2baecfad0ee24688b2d82b4ebda94, type: 3}
   - _characterType: 3
     _summonerConfig: {fileID: 11400000, guid: cbfd85821e41d094eb0c1a9fa2e9facb, type: 2}
-    _icon: {fileID: 720541754, guid: 45506c3a3c62de246bcfbebd5d9d9284, type: 3}
+    _icon: {fileID: -1868026574, guid: 6b9340cc128b0264b84263c38f80a987, type: 3}
