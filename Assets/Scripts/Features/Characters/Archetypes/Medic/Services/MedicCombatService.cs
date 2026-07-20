@@ -6,15 +6,17 @@ public class MedicCombatService {
     private readonly MedicConfig _config;
     private readonly DetectionService _detectionService;
     private readonly CharacterLineOfSightService _lineOfSightService;
+    private readonly EnemyDirectorService _directorService;
 
-    public MedicCombatService(
-        MedicConfig config,
-        DetectionService detectionService,
-        CharacterLineOfSightService lineOfSightService) {
+    public MedicCombatService(MedicConfig config,
+                              DetectionService detectionService,
+                              CharacterLineOfSightService lineOfSightService,
+                              EnemyDirectorService directorService) {
 
         _config = config;
         _detectionService = detectionService;
         _lineOfSightService = lineOfSightService;
+        _directorService = directorService;
     }
 
     public void Tick(CharacterBrain medic,
@@ -70,8 +72,8 @@ public class MedicCombatService {
                           ATTACK_DISTANCE_BUFFER);
 
         medic.MovementComponent
-            .MoveToDistance(targetPosition,
-                            stoppingDistance, 1f);
+             .MoveToDistance(targetPosition,
+                             stoppingDistance, 1f);
     }
 
     private void TryAttack(CharacterBrain medic,
@@ -82,7 +84,14 @@ public class MedicCombatService {
             return;
         }
 
-        target.HealthComponent.ApplyDamage(_config.Damage);
+        float damage =
+            _directorService != null ?
+            _directorService.GetDamage(medic,
+                                       target,
+                                      _config.Damage)
+            : _config.Damage;
+
+        target.HealthComponent.ApplyDamage(damage);
 
         runtime.NextAttackTime = Time.time +
                                  _config.AttackCooldown;

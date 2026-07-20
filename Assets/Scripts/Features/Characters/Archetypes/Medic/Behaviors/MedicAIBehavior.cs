@@ -6,6 +6,7 @@ public class MedicAIBehavior : ICharacterBehavior {
     private readonly MedicPositioningService _positioningService;
     private readonly MedicHealingService _healingService;
     private readonly MedicCombatService _combatService;
+    private readonly MedicRegenerationService _regenerationService;
 
     private readonly MedicHealingRuntime _healingRuntime = new();
     private readonly MedicCombatRuntime _combatRuntime = new();
@@ -14,12 +15,14 @@ public class MedicAIBehavior : ICharacterBehavior {
                            MedicTargetSelectionService targetSelectionService,
                            MedicPositioningService positioningService,
                            MedicHealingService healingService,
-                           MedicCombatService combatService) {
+                           MedicCombatService combatService,
+                           MedicRegenerationService regenerationService) {
         _brain = brain;
         _targetSelectionService = targetSelectionService;
         _positioningService = positioningService;
         _healingService = healingService;
         _combatService = combatService;
+        _regenerationService = regenerationService;
     }
 
     public void Reset() {
@@ -33,6 +36,8 @@ public class MedicAIBehavior : ICharacterBehavior {
     }
 
     public void Tick() {
+        _regenerationService.Tick(_brain);
+
         _targetSelectionService.UpdateTarget(
             _brain, _healingRuntime);
 
@@ -73,7 +78,7 @@ public class MedicAIBehavior : ICharacterBehavior {
 
 
         bool isHealing = _healingService.TryHeal(_brain, ally);
-        
+
         UpdateHealingPresentation(ally, isHealing);
     }
 

@@ -7,25 +7,18 @@ public sealed class EnemyDirectorService : IInitializable,
     private const float DEFAULT_FEED_INTERVAL = 4f;
 
     private readonly BattlefieldRegistry _battlefieldRegistry;
-    private readonly EnemyDirectorConfig _config;
+    private readonly EnemyCommanderConfig _config;
     private readonly EnemyDirectorRuntime _runtime;
 
-    public EnemyDirectorState State => _runtime.State;
+    public bool CanRefill => !_runtime.IsRefillPaused;
+    public float ThreatLoad => _runtime.ThreatLoad;
+    public float FeedInterval => _config != null ?
+                                 _config.GetRefillInterval(ThreatLoad) :
+                                 DEFAULT_FEED_INTERVAL;
 
-    public float FeedInterval {
-        get {
-            EnemyDirectorProfile profile =
-                _config?.GetProfile(State);
-
-            return profile?.FeedInterval
-                   ?? DEFAULT_FEED_INTERVAL;
-        }
-    }
-
-    public EnemyDirectorService(
-                BattlefieldRegistry battlefieldRegistry,
-                EnemyDirectorConfig config,
-                EnemyDirectorRuntime runtime) {
+    public EnemyDirectorService(BattlefieldRegistry battlefieldRegistry,
+                                EnemyCommanderConfig config,
+                                EnemyDirectorRuntime runtime) {
 
         _battlefieldRegistry = battlefieldRegistry;
         _config = config;
@@ -36,6 +29,7 @@ public sealed class EnemyDirectorService : IInitializable,
         if (_config == null) return;
 
         _runtime.Reset(Time.time, _config.EvaluationInterval);
+        EvaluateThreat();
     }
 
     public void Tick() {
@@ -47,29 +41,66 @@ public sealed class EnemyDirectorService : IInitializable,
         _runtime.ScheduleEvaluation(
             Time.time, _config.EvaluationInterval);
 
-        EvaluateState();
+        EvaluateThreat();
     }
 
-    private void EvaluateState() {
+    public float GetDamage(CharacterBrain attacker,
+                           CharacterBrain target,
+                           float damage) {
+        float result = Mathf.Max(0f, damage);
+
+        if (_config == null ||
+            attacker?.Runtime == null ||
+            target?.Runtime == null) {
+            return result;
+        }
+
+        if (attacker.Runtime.TeamType == TeamType.Enemy &&
+            target.Runtime.TeamType == TeamType.Ally) {
+            result *= _config.EnemyToAllyDamageMultiplier;
+        }
+
+        if (target.Runtime.TeamType == TeamType.Enemy &&
+            target.Config != null) {
+            float maximumDamage =
+                target.Config.MaxHP *
+                _config.MaximumEnemyHealthFractionPerHit;
+
+            result = Mathf.Min(result, maximumDamage);
+        }
+
+        return result;
+    }
+
+    private void EvaluateThreat() {
         float allyThreat = CalculateThreat(_battlefieldRegistry.Allies);
         float enemyThreat = CalculateThreat(_battlefieldRegistry.Enemies);
 
-        EnemyDirectorState nextState = allyThreat > 0f &&
-                                       enemyThreat < allyThreat ?
-                                            EnemyDirectorState.Pressure :
-                                            EnemyDirectorState.Calm;
+        float targetEnemyThreat =
+            allyThreat * _config.TargetEnemyThreatRatio;
 
-        if (!_runtime.SetState(nextState) ||
-            !_config.LogStateChanges) {
+        bool pauseChanged = _runtime.UpdateThreat(
+            allyThreat,
+            enemyThreat,
+            targetEnemyThreat);
+
+        if (!pauseChanged ||
+            !_config.LogRefillChanges) {
             return;
         }
 
-        Debug.Log($"[EnemyDirector] {nextState} | " +
+        string refillState = _runtime.IsRefillPaused
+            ? "Paused"
+            : "Active";
+
+        Debug.Log($"[EnemyDirector] Refill {refillState} | " +
                   $"Ally Threat: {allyThreat:0.##} | " +
-                  $"Enemy Threat: {enemyThreat:0.##}");
+                  $"Enemy Threat: {enemyThreat:0.##}/" +
+                  $"{targetEnemyThreat:0.##} | " +
+                  $"Load: {_runtime.ThreatLoad:P0}");
     }
 
-    private float CalculateThreat( IReadOnlyList<CharacterBrain> characters) {
+    private float CalculateThreat(IReadOnlyList<CharacterBrain> characters) {
         float totalThreat = 0f;
 
         for (int i = 0; i < characters.Count; i++) {

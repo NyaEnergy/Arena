@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class EnemyQueueSlotView : MonoBehaviour,
                                   IEndDragHandler {
     [SerializeField] private GameObject _emptyState;
     [SerializeField] private Image _icon;
+    [SerializeField] private TMP_Text _countText;
 
     private EnemyQueueItem _item;
     private bool _isDragging;
@@ -69,9 +71,20 @@ public class EnemyQueueSlotView : MonoBehaviour,
             _emptyState.SetActive(!isOccupied);
         }
 
-        if (_icon == null) return;
+        if (_icon != null) {
+            _icon.sprite = isOccupied ? _item.Icon : null;
+            _icon.enabled = isOccupied && !_isDragging;
+        }
 
-        _icon.sprite = isOccupied ? _item.Icon : null;
-        _icon.enabled = isOccupied && !_isDragging;
+        if (_countText != null) {
+            bool showCount = isOccupied &&
+                             !_isDragging &&
+                             _item.Count > 1;
+
+            _countText.text = showCount ?
+                              $"×{_item.Count}" : string.Empty;
+
+            _countText.enabled = showCount;
+        }
     }
 }

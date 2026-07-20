@@ -62,7 +62,10 @@ public class QueueDragController : IInitializable,
         EnemyQueueItem item = _runtime.GetAt(index);
 
         if (item?.Icon == null ||
-            !_dragView.Show(item.Icon, screenPosition)) {
+            !_dragView.Show(
+                item.Icon,
+                item.Count,
+                screenPosition)) {
             return;
         }
 

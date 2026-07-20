@@ -4,6 +4,7 @@ public class CombatComponent {
     private readonly CharacterBrain _owner;
     private readonly ICharacterAttackConfig _config;
     private readonly TargetComponent _targetComponent;
+    private readonly EnemyDirectorService _directorService;
 
     private float _lastAttackTime;
 
@@ -35,10 +36,12 @@ public class CombatComponent {
 
     public CombatComponent(CharacterBrain owner,
                            ICharacterAttackConfig config,
-                           TargetComponent targetComponent) {
+                           TargetComponent targetComponent,
+                           EnemyDirectorService directorService) {
         _owner = owner;
         _config = config;
         _targetComponent = targetComponent;
+        _directorService = directorService;
 
         Reset();
     }
@@ -54,7 +57,14 @@ public class CombatComponent {
                                 .CurrentTarget
                                 .CurrentValue;
 
-        target.HealthComponent.ApplyDamage(_config.Damage);
+        float damage =
+            _directorService != null ?
+            _directorService.GetDamage(_owner,
+                                        target,
+                                       _config.Damage)
+            : _config.Damage;
+
+        target.HealthComponent.ApplyDamage(damage);
         _lastAttackTime = Time.time;
         return true;
     }

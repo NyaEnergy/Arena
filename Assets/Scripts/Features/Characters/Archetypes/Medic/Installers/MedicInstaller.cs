@@ -15,6 +15,7 @@ public class MedicInstaller : MonoInstaller {
         Container.Bind<MedicPositioningService>().AsSingle();
         Container.Bind<MedicAllyQueryService>().AsSingle();
         Container.Bind<MedicHealingService>().AsSingle();
+        Container.Bind<MedicRegenerationService>().AsSingle();
         Container.Bind<MedicHealthService>().AsSingle();
         Container.Bind<MedicCombatService>().AsSingle();
     }

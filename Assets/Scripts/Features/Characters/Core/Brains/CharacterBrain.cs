@@ -18,7 +18,8 @@ public class CharacterBrain {
 
     public CharacterBrain(CharacterView view,
                           ICharacterRuntimeConfig config,
-                          TeamType teamType) {
+                          TeamType teamType,
+                          EnemyDirectorService directorService) {
         _view = view;
         _config = config;
 
@@ -28,15 +29,16 @@ public class CharacterBrain {
         _movementComponent = new MovementComponent(view, config.MoveSpeed);
 
         if (config is ICharacterAttackConfig attackConfig) {
-            _combatComponent =
-                new CombatComponent(this,
-                    attackConfig,
-                    _targetComponent);
+            _combatComponent = new CombatComponent(this,
+                                                   attackConfig,
+                                                  _targetComponent,
+                                                   directorService);
         }
     }
 
     public void Reset() {
         _runtime.Reset();
+        _healthComponent.Reset();
         _targetComponent.ClearTarget();
         _movementComponent.Reset();
         _combatComponent?.Reset();

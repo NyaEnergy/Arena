@@ -8,6 +8,8 @@ public class EnemyPlacementInstaller : MonoInstaller {
         Container.Bind<QueueDragView>().FromInstance(_dragView).AsSingle();
 
         Container.Bind<TerritoryDropService>().AsSingle();
+        Container.Bind<EnemyGroupFormationService>().AsSingle();
+        Container.Bind<EnemyGroupDeploymentService>().AsSingle();
         Container.Bind<EnemyPlacementService>().AsSingle();
         Container.BindInterfacesTo<QueueDragController>().AsSingle();
     }

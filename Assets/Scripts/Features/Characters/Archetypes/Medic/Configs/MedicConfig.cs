@@ -21,13 +21,17 @@ public class MedicConfig : ScriptableObject,
     [SerializeField] private Range _attackDistanceRange = new(0f, 9f);
 
     [Header("Healing")]
-    [SerializeField] private float _healingPerSecond = 20f;
+    [SerializeField] private float _healingPerSecond = 24f;
     [SerializeField] private float _healingDistance = 3f;
     [SerializeField] private float _supportDistance = 1.5f;
     [SerializeField] private float _emergencySwitchDelta = 0.05f;
 
     [SerializeField] private Range _emergencyHealthRange = new(0.15f, 0.35f);
     [SerializeField] private Range _criticalHealthRange = new(0.4f, 0.65f);
+
+    [Header("Regeneration")]
+    [SerializeField, Min(0f)] private float _regenerationPerSecond = 10f;
+    [SerializeField, Min(0f)] private float _regenerationDelay = 4f;
 
     [Header("Line Of Sight")]
     [SerializeField] private LayerMask _lineOfSightBlockingLayers = ~0;
@@ -55,6 +59,9 @@ public class MedicConfig : ScriptableObject,
 
     public Range EmergencyHealthRange => _emergencyHealthRange;
     public Range CriticalHealthRange => _criticalHealthRange;
+
+    public float RegenerationPerSecond => Mathf.Max(0f, _regenerationPerSecond);
+    public float RegenerationDelay => Mathf.Max(0f, _regenerationDelay);
 
     public LayerMask LineOfSightBlockingLayers => _lineOfSightBlockingLayers;
     public QueryTriggerInteraction LineOfSightTriggerInteraction => _lineOfSightTriggerInteraction;

@@ -1,53 +1,41 @@
 using System.Collections.Generic;
 
 public sealed class EnemyConveyorSource {
-    private readonly EnemyDirectorConfig _directorConfig;
-    private readonly EnemyDirectorRuntime _directorRuntime;
-    private readonly EnemyDirectorService _directorService;
+    private readonly EnemyCommanderConfig _config;
+    private readonly EnemyConveyorRuntime _runtime;
 
     public EnemyConveyorSource(
-            EnemyDirectorConfig directorConfig,
-            EnemyDirectorRuntime directorRuntime,
-            EnemyDirectorService directorService) {
-
-        _directorConfig = directorConfig;
-        _directorRuntime = directorRuntime;
-        _directorService = directorService;
+            EnemyCommanderConfig config,
+            EnemyConveyorRuntime runtime) {
+        _config = config;
+        _runtime = runtime;
     }
 
     public bool TryGetNext(out EnemyQueueItem item,
-                           out EnemyDirectorState state,
-                           out int entryIndex,
-                           out int entryCount) {
+                           out int groupIndex,
+                           out int groupCount) {
 
         item = null;
-        state = _directorService.State;
-        entryIndex = -1;
+        groupIndex = -1;
 
-        EnemyDirectorProfile profile =
-            _directorConfig?.GetProfile(state);
+        IReadOnlyList<EnemyGroupConfig> groups =
+            _config?.Groups;
 
-        IReadOnlyList<EnemyConveyorEntry> entries =
-            profile?.Entries;
+        groupCount = groups?.Count ?? 0;
 
-        entryCount = entries?.Count ?? 0;
+        if (groupCount == 0) return false;
 
-        if (entryCount == 0) return false;
+        int startIndex = _runtime.NextGroupIndex % groupCount;
 
-        int startIndex =
-            _directorRuntime
-                .GetNextEntryIndex(state) % entryCount;
+        for (int offset = 0; offset < groupCount; offset++) {
 
-        for (int offset = 0; offset < entryCount; offset++) {
-
-            int index = (startIndex + offset) % entryCount;
-            EnemyConveyorEntry entry = entries[index];
-            EnemyQueueItem candidate = entry?.CreateItem();
+            int index = (startIndex + offset) % groupCount;
+            EnemyQueueItem candidate = groups[index]?.CreateItem();
 
             if (candidate == null) continue;
 
             item = candidate;
-            entryIndex = index;
+            groupIndex = index;
 
             return true;
         }
@@ -55,11 +43,8 @@ public sealed class EnemyConveyorSource {
         return false;
     }
 
-    public void Confirm(EnemyDirectorState state,
-                        int entryIndex,
-                        int entryCount) {
-
-        _directorRuntime.Advance(
-            state, entryIndex, entryCount);
+    public void Confirm(int groupIndex,
+                        int groupCount) {
+        _runtime.ConfirmGroup(groupIndex, groupCount);
     }
 }

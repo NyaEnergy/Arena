@@ -11,6 +11,7 @@ public class CharacterLifecycleFactory {
     private readonly CharacterDeathPresentationService _deathService;
     private readonly HealthBarPaletteConfig _healthBarPalette;
     private readonly CharacterGroupService _groupService;
+    private readonly EnemyDirectorService _directorService;
     private readonly List<ICharacterBehaviorFactory> _behaviorFactories;
     private readonly Camera _camera;
 
@@ -22,6 +23,7 @@ public class CharacterLifecycleFactory {
                                      CharacterDeathPresentationService deathService,
                                      HealthBarPaletteConfig healthBarPalette,
                                      CharacterGroupService groupService,
+                                     EnemyDirectorService directorService,
                                      List<ICharacterBehaviorFactory> behaviorFactories,
                                      Camera camera) {
 
@@ -33,6 +35,7 @@ public class CharacterLifecycleFactory {
         _deathService = deathService;
         _healthBarPalette = healthBarPalette;
         _groupService = groupService;
+        _directorService = directorService;
         _behaviorFactories = behaviorFactories;
         _camera = camera;
     }
@@ -50,7 +53,11 @@ public class CharacterLifecycleFactory {
             return null;
         }
 
-        CharacterBrain brain = new(view, config, teamType);
+        CharacterBrain brain = new(
+            view,
+            config,
+            teamType,
+            _directorService);
 
         CharacterBehaviorController behaviorController =
             new(brain,
@@ -76,14 +83,14 @@ public class CharacterLifecycleFactory {
     }
 
     private ICharacterBehavior CreateBehavior(CharacterBrain brain) {
-        
+
         for (int i = 0; i < _behaviorFactories.Count; i++) {
 
             ICharacterBehaviorFactory factory = _behaviorFactories[i];
 
             if (factory != null &&
                 factory.CanCreate(brain))
-                    return factory.Create(brain);
+                return factory.Create(brain);
         }
 
         return null;

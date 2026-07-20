@@ -3,24 +3,22 @@ using Zenject;
 
 public sealed class EnemyConveyorService : IInitializable,
                                            ITickable {
-    private readonly EnemyConveyorConfig _config;
+    private readonly EnemyCommanderConfig _config;
     private readonly EnemyConveyorRuntime _runtime;
     private readonly EnemyConveyorSource _source;
 
     private readonly EnemyQueueRuntime _queueRuntime;
     private readonly EnemyQueueService _queueService;
-    private readonly EnemyQueueReleaseService _releaseService;
 
     private readonly EnemyDirectorService _directorService;
     private readonly IQueueDragState _dragState;
 
     public EnemyConveyorService(
-                EnemyConveyorConfig config,
+                EnemyCommanderConfig config,
                 EnemyConveyorRuntime runtime,
                 EnemyConveyorSource source,
                 EnemyQueueRuntime queueRuntime,
                 EnemyQueueService queueService,
-                EnemyQueueReleaseService releaseService,
                 EnemyDirectorService directorService,
                 IQueueDragState dragState) {
 
@@ -30,7 +28,6 @@ public sealed class EnemyConveyorService : IInitializable,
 
         _queueRuntime = queueRuntime;
         _queueService = queueService;
-        _releaseService = releaseService;
 
         _directorService = directorService;
         _dragState = dragState;
@@ -39,34 +36,30 @@ public sealed class EnemyConveyorService : IInitializable,
     public void Initialize() {
         if (_config == null) return;
 
-        _runtime.Reset(
-            Time.time,
-            _config.StartDelay);
+        _runtime.Reset(_config.StartDelay);
     }
 
     public void Tick() {
-        if (_config == null ||
-            _dragState.IsDragging ||
-            !_runtime.IsReady(Time.time)) {
+        if (_config == null) return;
+
+        _runtime.Tick(Time.deltaTime);
+
+        if (_dragState.IsDragging ||
+            _queueRuntime.IsFull ||
+            !_directorService.CanRefill ||
+            !_runtime.TryConsumeFeed(
+                Time.deltaTime,
+                _directorService.FeedInterval)) {
             return;
         }
-
-        _runtime.Schedule(Time.time,
-                          _directorService.FeedInterval);
 
         TryFeed();
     }
 
     private bool TryFeed() {
         if (!_source.TryGetNext(out EnemyQueueItem item,
-                                out EnemyDirectorState state,
-                                out int entryIndex,
-                                out int entryCount)) {
-            return false;
-        }
-
-        if (_queueRuntime.IsFull &&
-            !_releaseService.ReleaseNext()) {
+                                out int groupIndex,
+                                out int groupCount)) {
             return false;
         }
 
@@ -74,7 +67,7 @@ public sealed class EnemyConveyorService : IInitializable,
             return false;
         }
 
-        _source.Confirm(state, entryIndex, entryCount);
+        _source.Confirm(groupIndex, groupCount);
 
         return true;
     }

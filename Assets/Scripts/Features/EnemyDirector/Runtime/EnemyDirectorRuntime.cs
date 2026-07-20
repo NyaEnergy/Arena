@@ -1,18 +1,18 @@
 public sealed class EnemyDirectorRuntime {
-    public EnemyDirectorState State { get; private set; }
-
+    public float AllyThreat { get; private set; }
+    public float EnemyThreat { get; private set; }
+    public float TargetEnemyThreat { get; private set; }
+    public float ThreatLoad { get; private set; }
     public float NextEvaluationTime { get; private set; }
-
-    public int NextCalmEntryIndex { get; private set; }
-    public int NextPressureEntryIndex { get; private set; }
+    public bool IsRefillPaused { get; private set; }
 
     public void Reset(float time,
                       float evaluationInterval) {
-
-        State = EnemyDirectorState.Calm;
-
-        NextCalmEntryIndex = 0;
-        NextPressureEntryIndex = 0;
+        AllyThreat = 0f;
+        EnemyThreat = 0f;
+        TargetEnemyThreat = 0f;
+        ThreatLoad = 1f;
+        IsRefillPaused = true;
 
         ScheduleEvaluation(time, evaluationInterval);
     }
@@ -21,34 +21,26 @@ public sealed class EnemyDirectorRuntime {
         return time >= NextEvaluationTime;
     }
 
-    public void ScheduleEvaluation(float time, float interval) {
+    public void ScheduleEvaluation(float time,
+                                   float interval) {
         NextEvaluationTime = time + interval;
     }
 
-    public bool SetState(EnemyDirectorState state) {
-        if (State == state) return false;
+    public bool UpdateThreat(float allyThreat,
+                             float enemyThreat,
+                             float targetEnemyThreat) {
+        bool wasPaused = IsRefillPaused;
 
-        State = state;
-        return true;
-    }
+        AllyThreat = System.Math.Max(0f, allyThreat);
+        EnemyThreat = System.Math.Max(0f, enemyThreat);
+        TargetEnemyThreat = System.Math.Max(0f, targetEnemyThreat);
 
-    public int GetNextEntryIndex(EnemyDirectorState state) {
-        return state == EnemyDirectorState.Pressure ?
-               NextPressureEntryIndex : NextCalmEntryIndex;
-    }
+        ThreatLoad = TargetEnemyThreat > 0f ?
+                     EnemyThreat / TargetEnemyThreat : 1f;
 
-    public void Advance(EnemyDirectorState state,
-                        int usedIndex,
-                        int entryCount) {
+        IsRefillPaused = TargetEnemyThreat <= 0f ||
+                         EnemyThreat >= TargetEnemyThreat;
 
-        int nextIndex = entryCount > 0 ?
-            (usedIndex + 1) % entryCount : 0;
-
-        if (state == EnemyDirectorState.Pressure) {
-            NextPressureEntryIndex = nextIndex;
-            return;
-        }
-
-        NextCalmEntryIndex = nextIndex;
+        return wasPaused != IsRefillPaused;
     }
 }

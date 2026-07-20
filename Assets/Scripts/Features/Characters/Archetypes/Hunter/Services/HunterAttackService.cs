@@ -3,11 +3,14 @@ using UnityEngine;
 public class HunterAttackService {
     private readonly HunterConfig _config;
     private readonly CharacterLineOfSightService _lineOfSightService;
+    private readonly EnemyDirectorService _directorService;
 
     public HunterAttackService(HunterConfig config,
-                               CharacterLineOfSightService lineOfSightService) {
+                               CharacterLineOfSightService lineOfSightService,
+                               EnemyDirectorService directorService) {
         _config = config;
         _lineOfSightService = lineOfSightService;
+        _directorService = directorService;
     }
 
     public bool TryRangedAttack(CharacterBrain hunter,
@@ -24,7 +27,7 @@ public class HunterAttackService {
             return false;
         }
 
-        ApplyAttack(target, runtime,
+        ApplyAttack(hunter, target, runtime,
                     _config.RangedDamage,
                     _config.RangedAttackCooldown);
 
@@ -42,7 +45,7 @@ public class HunterAttackService {
             return false;
         }
 
-        ApplyAttack(target, runtime,
+        ApplyAttack(hunter, target, runtime,
             _config.MeleeDamage,
             _config.MeleeAttackCooldown);
 
@@ -76,12 +79,19 @@ public class HunterAttackService {
                sqrDistance <= sqrDistanceRange.Max;
     }
 
-    private void ApplyAttack(CharacterBrain target,
+    private void ApplyAttack(CharacterBrain hunter,
+                             CharacterBrain target,
                              HunterRuntime runtime,
                              float damage,
                              float cooldown) {
 
-        target.HealthComponent.ApplyDamage(damage);
+        float appliedDamage =
+            _directorService != null ?
+            _directorService.GetDamage(
+                hunter, target, damage)
+            : damage;
+
+        target.HealthComponent.ApplyDamage(appliedDamage);
         runtime.NextAttackTime = Time.time + cooldown;
     }
 

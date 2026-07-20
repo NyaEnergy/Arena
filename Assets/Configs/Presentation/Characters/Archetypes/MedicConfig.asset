@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MedicConfig
   _maxHP: 80
   _moveSpeed: 4.7
+  _threatWeight: 3
   _prefab: {fileID: 1503560794414281780, guid: 2ff2bb0208f721e468970511cf49cd81, type: 3}
   _combatRow: 3
   _entryPresentation: {fileID: 11400000, guid: fa1f0ac9626270641a47a3ead1ea5876, type: 2}
@@ -23,7 +24,7 @@ MonoBehaviour:
   _attackDistanceRange:
     _min: 0
     _max: 9
-  _healingPerSecond: 12
+  _healingPerSecond: 24
   _healingDistance: 3.5
   _supportDistance: 1.4
   _emergencySwitchDelta: 0.05
@@ -33,6 +34,8 @@ MonoBehaviour:
   _criticalHealthRange:
     _min: 0.4
     _max: 0.65
+  _regenerationPerSecond: 10
+  _regenerationDelay: 4
   _lineOfSightBlockingLayers:
     serializedVersion: 2
     m_Bits: 768

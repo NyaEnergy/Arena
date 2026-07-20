@@ -4,17 +4,17 @@ public class EnemyPlacementService {
     private readonly TerritoryDropService _dropService;
     private readonly TerritorySpawnGate _spawnGate;
 
-    private readonly CharacterDeploymentService
-        _deploymentService;
+    private readonly EnemyGroupDeploymentService
+        _groupDeploymentService;
 
     public EnemyPlacementService(
                 TerritoryDropService dropService,
                 TerritorySpawnGate spawnGate,
-                CharacterDeploymentService deploymentService) {
+                EnemyGroupDeploymentService groupDeploymentService) {
 
         _dropService = dropService;
         _spawnGate = spawnGate;
-        _deploymentService = deploymentService;
+        _groupDeploymentService = groupDeploymentService;
     }
 
     public bool TryPlace(EnemyQueueItem item,
@@ -30,10 +30,7 @@ public class EnemyPlacementService {
 
         if (!_spawnGate.CanSpawn(territory)) return false;
 
-        CharacterView view = _deploymentService.Deploy(
-                                item.CreateRequest(),
-                                position);
-
-        return view != null;
+        return _groupDeploymentService.TryDeploy(
+            item, territory, position);
     }
 }

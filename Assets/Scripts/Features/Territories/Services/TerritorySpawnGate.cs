@@ -15,13 +15,22 @@ public class TerritorySpawnGate {
     }
 
     public bool TryGetEnemyPosition(out Vector3 position) {
+        return TryGetEnemyPosition(
+            out TerritoryRuntime territory,
+            out position);
+    }
+
+    public bool TryGetEnemyPosition(
+        out TerritoryRuntime territory,
+        out Vector3 position) {
+        territory = null;
         position = default;
 
-        IReadOnlyList<TerritoryRuntime> territories =
-            _registry.Territories;
+        IReadOnlyList<TerritoryRuntime> territories = _registry.Territories;
 
         for (int i = 0; i < territories.Count; i++) {
             if (TryGetEnemyPosition(territories[i], out position)) {
+                territory = territories[i];
                 return true;
             }
         }

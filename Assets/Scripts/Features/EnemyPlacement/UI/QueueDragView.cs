@@ -5,19 +5,31 @@ public class QueueDragView : MonoBehaviour {
     [SerializeField] private Canvas _canvas;
     [SerializeField] private RectTransform _root;
     [SerializeField] private Image _icon;
+    [SerializeField] private Text _countText;
 
     public bool Show(Sprite sprite,
+                     int count,
                      Vector2 screenPosition) {
         if (_root == null ||
             _icon == null ||
              sprite == null) {
-                return false;
+            return false;
         }
 
         _root.gameObject.SetActive(true);
 
         _icon.raycastTarget = false;
         _icon.sprite = sprite;
+
+        if (_countText != null) {
+            bool showCount = count > 1;
+
+            _countText.raycastTarget = false;
+            _countText.text = showCount ?
+                              $"×{count}" : string.Empty;
+
+            _countText.enabled = showCount;
+        }
 
         Move(screenPosition);
 
@@ -53,6 +65,11 @@ public class QueueDragView : MonoBehaviour {
 
         if (_icon != null) {
             _icon.sprite = null;
+        }
+
+        if (_countText != null) {
+            _countText.text = string.Empty;
+            _countText.enabled = false;
         }
     }
 }
