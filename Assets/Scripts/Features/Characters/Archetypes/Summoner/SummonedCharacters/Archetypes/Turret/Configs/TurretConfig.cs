@@ -7,6 +7,7 @@ public class TurretConfig : SummonedCharacterConfig,
     [Header("Base")]
     [SerializeField] private float _maxHP = 25f;
     [SerializeField] private float _moveSpeed;
+    [SerializeField, Min(0.1f)] private float _threatWeight = 1.5f;
     [SerializeField] private TurretView _prefab;
     [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Ranged;
 
@@ -25,6 +26,7 @@ public class TurretConfig : SummonedCharacterConfig,
 
     public override float MaxHP => _maxHP;
     public override float MoveSpeed => _moveSpeed;
+    public override float ThreatWeight => Mathf.Max(0.1f, _threatWeight);
     public override CharacterView Prefab => _prefab;
     public override CharacterCombatRow CombatRow => _combatRow;
 

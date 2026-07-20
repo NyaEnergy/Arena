@@ -7,6 +7,7 @@ public class MedicConfig : ScriptableObject,
     [Header("Base")]
     [SerializeField] private float _maxHP = 110f;
     [SerializeField] private float _moveSpeed = 4.6f;
+    [SerializeField, Min(0.1f)] private float _threatWeight = 3f;
     [SerializeField] private MedicView _prefab;
     [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Support;
 
@@ -36,6 +37,7 @@ public class MedicConfig : ScriptableObject,
 
     public float MaxHP => _maxHP;
     public float MoveSpeed => _moveSpeed;
+    public float ThreatWeight => Mathf.Max(0.1f, _threatWeight);
     public CharacterView Prefab => _prefab;
     public CharacterCombatRow CombatRow => _combatRow;
 

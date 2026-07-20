@@ -7,6 +7,7 @@ public class SummonerConfig : ScriptableObject,
     [Header("Base")]
     [SerializeField] private float _maxHP = 95f;
     [SerializeField] private float _moveSpeed = 4.1f;
+    [SerializeField, Min(0.1f)] private float _threatWeight = 3f;
     [SerializeField] private SummonerView _prefab;
     [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Ranged;
 
@@ -32,6 +33,7 @@ public class SummonerConfig : ScriptableObject,
     public SummonedCharacterConfig SummonedCharacterConfig => _summonedCharacterConfig;
     public float MaxHP => _maxHP;
     public float MoveSpeed => _moveSpeed;
+    public float ThreatWeight => Mathf.Max(0.1f, _threatWeight);
     public CharacterView Prefab => _prefab;
     public CharacterCombatRow CombatRow => _combatRow;
 

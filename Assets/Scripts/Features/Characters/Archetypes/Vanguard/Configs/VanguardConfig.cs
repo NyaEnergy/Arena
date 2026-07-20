@@ -8,6 +8,7 @@ public class VanguardConfig : ScriptableObject,
     [Header("Base")]
     [SerializeField] private float _maxHP = 180f;
     [SerializeField] private float _moveSpeed = 4f;
+    [SerializeField, Min(0.1f)] private float _threatWeight = 3f;
     [SerializeField] private VanguardView _prefab;
     [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Front;
 
@@ -24,6 +25,7 @@ public class VanguardConfig : ScriptableObject,
 
     public float MaxHP => _maxHP;
     public float MoveSpeed => _moveSpeed;
+    public float ThreatWeight => Mathf.Max(0.1f, _threatWeight);
     public CharacterView Prefab => _prefab;
     public CharacterCombatRow CombatRow => _combatRow;
 

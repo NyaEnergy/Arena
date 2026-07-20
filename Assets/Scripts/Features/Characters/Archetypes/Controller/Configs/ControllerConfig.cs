@@ -8,6 +8,7 @@ public class ControllerConfig : ScriptableObject,
     [Header("Base")]
     [SerializeField] private float _maxHP = 105f;
     [SerializeField] private float _moveSpeed = 4.2f;
+    [SerializeField, Min(0.1f)] private float _threatWeight = 2f;
     [SerializeField] private ControllerView _prefab;
     [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Support;
 
@@ -34,6 +35,7 @@ public class ControllerConfig : ScriptableObject,
 
     public float MaxHP => _maxHP;
     public float MoveSpeed => _moveSpeed;
+    public float ThreatWeight => Mathf.Max(0.1f, _threatWeight);
     public CharacterView Prefab => _prefab;
     public CharacterCombatRow CombatRow => _combatRow;
     public CharacterPresencePresentationConfig EntryPresentation => _entryPresentation;

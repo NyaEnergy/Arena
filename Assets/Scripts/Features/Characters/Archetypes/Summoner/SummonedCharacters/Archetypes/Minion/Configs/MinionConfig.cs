@@ -7,6 +7,7 @@ public class MinionConfig : SummonedCharacterConfig,
     [Header("Base")]
     [SerializeField] private float _maxHP = 35f;
     [SerializeField] private float _moveSpeed = 5.2f;
+    [SerializeField, Min(0.1f)] private float _threatWeight = 1f;
     [SerializeField] private MinionView _prefab;
     [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Front;
 
@@ -23,6 +24,7 @@ public class MinionConfig : SummonedCharacterConfig,
 
     public override float MaxHP => _maxHP;
     public override float MoveSpeed => _moveSpeed;
+    public override float ThreatWeight => Mathf.Max(0.1f, _threatWeight);
     public override CharacterView Prefab => _prefab;
     public override CharacterCombatRow CombatRow => _combatRow;
 

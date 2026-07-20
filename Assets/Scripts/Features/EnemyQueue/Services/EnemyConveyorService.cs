@@ -6,32 +6,42 @@ public sealed class EnemyConveyorService : IInitializable,
     private readonly EnemyConveyorConfig _config;
     private readonly EnemyConveyorRuntime _runtime;
     private readonly EnemyConveyorSource _source;
+
     private readonly EnemyQueueRuntime _queueRuntime;
     private readonly EnemyQueueService _queueService;
     private readonly EnemyQueueReleaseService _releaseService;
+
+    private readonly EnemyDirectorService _directorService;
     private readonly IQueueDragState _dragState;
 
-    public EnemyConveyorService(EnemyConveyorConfig config,
-                                EnemyConveyorRuntime runtime,
-                                EnemyConveyorSource source,
-                                EnemyQueueRuntime queueRuntime,
-                                EnemyQueueService queueService,
-                                EnemyQueueReleaseService releaseService,
-                                IQueueDragState dragState) {
+    public EnemyConveyorService(
+                EnemyConveyorConfig config,
+                EnemyConveyorRuntime runtime,
+                EnemyConveyorSource source,
+                EnemyQueueRuntime queueRuntime,
+                EnemyQueueService queueService,
+                EnemyQueueReleaseService releaseService,
+                EnemyDirectorService directorService,
+                IQueueDragState dragState) {
+
         _config = config;
         _runtime = runtime;
         _source = source;
+
         _queueRuntime = queueRuntime;
         _queueService = queueService;
         _releaseService = releaseService;
+
+        _directorService = directorService;
         _dragState = dragState;
     }
 
     public void Initialize() {
         if (_config == null) return;
 
-        _runtime.Reset(Time.time,
-                       _config.StartDelay);
+        _runtime.Reset(
+            Time.time,
+            _config.StartDelay);
     }
 
     public void Tick() {
@@ -42,13 +52,14 @@ public sealed class EnemyConveyorService : IInitializable,
         }
 
         _runtime.Schedule(Time.time,
-                          _config.FeedInterval);
+                          _directorService.FeedInterval);
 
         TryFeed();
     }
 
     private bool TryFeed() {
         if (!_source.TryGetNext(out EnemyQueueItem item,
+                                out EnemyDirectorState state,
                                 out int entryIndex,
                                 out int entryCount)) {
             return false;
@@ -63,7 +74,8 @@ public sealed class EnemyConveyorService : IInitializable,
             return false;
         }
 
-        _source.Confirm(entryIndex, entryCount);
+        _source.Confirm(state, entryIndex, entryCount);
+
         return true;
     }
 }

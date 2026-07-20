@@ -7,4 +7,5 @@ public interface ICharacterRuntimeConfig {
 
     float MaxHP { get; }
     float MoveSpeed { get; }
+    float ThreatWeight { get; }
 }

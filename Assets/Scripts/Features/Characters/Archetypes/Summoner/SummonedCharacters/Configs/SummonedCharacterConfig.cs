@@ -12,4 +12,5 @@ public abstract class SummonedCharacterConfig : ScriptableObject,
 
     public abstract float MaxHP { get; }
     public abstract float MoveSpeed { get; }
+    public abstract float ThreatWeight { get; }
 }

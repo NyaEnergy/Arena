@@ -7,6 +7,7 @@ public class HunterConfig : ScriptableObject,
     [Header("Base")]
     [SerializeField] private float _maxHP = 90f;
     [SerializeField] private float _moveSpeed = 4.5f;
+    [SerializeField, Min(0.1f)] private float _threatWeight = 4f;
     [SerializeField] private HunterView _prefab;
     [SerializeField] private CharacterCombatRow _combatRow = CharacterCombatRow.Ranged;
 
@@ -43,6 +44,7 @@ public class HunterConfig : ScriptableObject,
 
     public float MaxHP => _maxHP;
     public float MoveSpeed => _moveSpeed;
+    public float ThreatWeight => Mathf.Max(0.1f, _threatWeight);
     public CharacterView Prefab => _prefab;
     public CharacterCombatRow CombatRow => _combatRow;
 
