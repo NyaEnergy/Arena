@@ -4,15 +4,18 @@ using UnityEngine;
 public sealed class EnemyGroupDeploymentService {
     private readonly CharacterDeploymentService _deploymentService;
     private readonly EnemyGroupFormationService _formationService;
+    private readonly CommanderQuestService _questService;
 
     private readonly List<Vector3> _positions = new();
 
     public EnemyGroupDeploymentService(
                 CharacterDeploymentService deploymentService,
-                EnemyGroupFormationService formationService) {
+                EnemyGroupFormationService formationService,
+                CommanderQuestService questService) {
 
         _deploymentService = deploymentService;
         _formationService = formationService;
+        _questService = questService;
     }
 
     public bool TryDeploy(EnemyQueueItem item,
@@ -48,6 +51,13 @@ public sealed class EnemyGroupDeploymentService {
             Debug.LogWarning(
                 $"[EnemyGroup] Deployed {deployedCount}/" +
                 $"{item.Count}. Check character pool capacity.");
+        }
+
+        if (deployedCount > 0) {
+            _questService.Report(new CommanderQuestEvent(
+                CommanderQuestEventType.EnemyGroupDeployed,
+                TeamType.Enemy,
+                item.CharacterType));
         }
 
         return deployedCount > 0;

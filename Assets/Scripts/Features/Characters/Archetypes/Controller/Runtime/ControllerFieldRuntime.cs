@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ControllerFieldRuntime {
+    private readonly HashSet<CharacterBrain> _reportedTargets = new();
+
     public TeamType TeamType { get; }
     public Vector3 Position { get; }
     public float Radius { get; }
@@ -27,5 +30,10 @@ public class ControllerFieldRuntime {
     public bool Tick(float deltaTime) {
         RemainingTime -= Mathf.Max(0f, deltaTime);
         return RemainingTime > 0f;
+    }
+
+    public bool MarkAffected(CharacterBrain target) {
+        return target != null &&
+               _reportedTargets.Add(target);
     }
 }

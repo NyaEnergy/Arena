@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3be42ce7c773db34984abce03bc34e62, type: 3}
+  m_Name: Oplot
+  m_EditorClassIdentifier: Assembly-CSharp::AllyCommanderConfig
+  _id: ally_oplot
+  _displayName: "\u041E\u043F\u043B\u043E\u0442"
+  _icon: {fileID: 21300000, guid: a55fdce169b5e484b8471b928230df40, type: 3}
+  _quests:
+  - {fileID: 11400000, guid: 694ab14d279f09040909fbc406e57eb8, type: 2}
+  - {fileID: 11400000, guid: 13db2d5f6c0355244949446794967c73, type: 2}

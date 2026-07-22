@@ -7,15 +7,18 @@ public class ControllerFieldService : ITickable {
     private readonly BattlefieldRegistry _registry;
     private readonly ControllerSlowService _slowService;
     private readonly ControllerFieldPool _fieldPool;
+    private readonly CommanderQuestService _questService;
 
     private readonly List<ControllerFieldRuntime> _fields = new();
 
     public ControllerFieldService(BattlefieldRegistry registry,
                                   ControllerSlowService slowService,
-                                  ControllerFieldPool fieldPool) {
+                                  ControllerFieldPool fieldPool,
+                                  CommanderQuestService questService) {
         _registry = registry;
         _slowService = slowService;
         _fieldPool = fieldPool;
+        _questService = questService;
     }
 
     public bool Cast(CharacterBrain owner,
@@ -24,7 +27,7 @@ public class ControllerFieldService : ITickable {
 
         if (owner?.Runtime == null ||
             config == null) {
-                return false;
+            return false;
         }
 
         float radius = Mathf.Max(0f, config.FieldRadius);
@@ -32,7 +35,7 @@ public class ControllerFieldService : ITickable {
 
         if (radius <= 0f ||
             duration <= 0f) {
-                return false;
+            return false;
         }
 
         TeamType teamType =
@@ -43,7 +46,7 @@ public class ControllerFieldService : ITickable {
 
         _fields.Add(new ControllerFieldRuntime(
                 teamType, position, radius,
-                Mathf.Clamp01( config.SlowMultiplier),
+                Mathf.Clamp01(config.SlowMultiplier),
                 duration, view));
 
         return true;
@@ -57,7 +60,7 @@ public class ControllerFieldService : ITickable {
             if (!field.Tick(Time.deltaTime)) {
                 _fieldPool.Return(field.View);
                 _fields.RemoveAt(i);
-                    continue;
+                continue;
             }
 
             Apply(field);
@@ -86,6 +89,13 @@ public class ControllerFieldService : ITickable {
 
             _slowService.Apply(
                 target, field.SlowMultiplier);
+
+            if (field.MarkAffected(target)) {
+                _questService.Report(new CommanderQuestEvent(
+                    CommanderQuestEventType.SlowApplied,
+                    field.TeamType,
+                    CharacterType.Controller));
+            }
         }
     }
 

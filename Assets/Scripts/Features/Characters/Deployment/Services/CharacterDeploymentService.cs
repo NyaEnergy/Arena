@@ -5,13 +5,17 @@ public class CharacterDeploymentService {
     private readonly SummonerFactory _summonerFactory;
 
     private readonly CharacterDeploymentPositionService _positionService;
+    private readonly CommanderQuestService _questService;
 
     public CharacterDeploymentService(CharacterFactory characterFactory,
                                       SummonerFactory summonerFactory,
-                                      CharacterDeploymentPositionService positionService) {
+                                      CharacterDeploymentPositionService positionService,
+                                      CommanderQuestService questService) {
+
         _characterFactory = characterFactory;
         _summonerFactory = summonerFactory;
         _positionService = positionService;
+        _questService = questService;
     }
 
     public CharacterView Deploy(CharacterDeploymentRequest request) {
@@ -38,6 +42,11 @@ public class CharacterDeploymentService {
         if (view == null) return null;
 
         view.transform.rotation = _positionService.GetRotation(request.TeamType);
+
+        _questService.Report(new CommanderQuestEvent(
+            CommanderQuestEventType.CharacterDeployed,
+            request.TeamType,
+            request.CharacterType));
 
         return view;
     }
