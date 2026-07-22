@@ -8,17 +8,20 @@ public class ControllerFieldService : ITickable {
     private readonly ControllerSlowService _slowService;
     private readonly ControllerFieldPool _fieldPool;
     private readonly CommanderQuestService _questService;
+    private readonly CommanderUpgradeEffectService _upgradeEffectService;
 
     private readonly List<ControllerFieldRuntime> _fields = new();
 
     public ControllerFieldService(BattlefieldRegistry registry,
                                   ControllerSlowService slowService,
                                   ControllerFieldPool fieldPool,
-                                  CommanderQuestService questService) {
+                                  CommanderQuestService questService,
+                                  CommanderUpgradeEffectService upgradeEffectService) {
         _registry = registry;
         _slowService = slowService;
         _fieldPool = fieldPool;
         _questService = questService;
+        _upgradeEffectService = upgradeEffectService;
     }
 
     public bool Cast(CharacterBrain owner,
@@ -87,8 +90,12 @@ public class ControllerFieldService : ITickable {
 
             if (difference.sqrMagnitude > sqrRadius) continue;
 
-            _slowService.Apply(
-                target, field.SlowMultiplier);
+            float slowMultiplier =
+                _upgradeEffectService.GetControllerSlowMultiplier(
+                    field.TeamType,
+                    field.SlowMultiplier);
+
+            _slowService.Apply(target, slowMultiplier);
 
             if (field.MarkAffected(target)) {
                 _questService.Report(new CommanderQuestEvent(

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Configs/Commander Quests/Commander Quest Config",
+[CreateAssetMenu(menuName = "Configs/Commanders/Progressions/Quest Config",
                  fileName = "CommanderQuestConfig")]
 public sealed class CommanderQuestConfig : ScriptableObject {
     [Header("Identity")]

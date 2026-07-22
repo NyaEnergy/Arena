@@ -15,6 +15,10 @@ MonoBehaviour:
   _id: enemy_trap
   _displayName: "\u041A\u0430\u043F\u043A\u0430\u043D"
   _icon: {fileID: 21300000, guid: 473484e89ca66f44a88675d597bf5af1, type: 3}
+  _quests:
+  - {fileID: 11400000, guid: 4fa513344d6fc8d439cd1a07f411a1d2, type: 2}
+  - {fileID: 11400000, guid: ea6ee456e4b515d4dbcf30b98830e24e, type: 2}
+  _progressionTree: {fileID: 11400000, guid: 3ffdb48b44661b143a5448ab5578cff9, type: 2}
   _startDelay: 2
   _minimumRefillInterval: 2
   _maximumRefillInterval: 8

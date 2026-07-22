@@ -18,3 +18,4 @@ MonoBehaviour:
   _quests:
   - {fileID: 11400000, guid: 694ab14d279f09040909fbc406e57eb8, type: 2}
   - {fileID: 11400000, guid: 13db2d5f6c0355244949446794967c73, type: 2}
+  _progressionTree: {fileID: 11400000, guid: 3b1c6ebd26cef094f89aec5179eba4e9, type: 2}

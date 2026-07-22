@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Configs/Enemy Commander/Enemy Group Config",
+[CreateAssetMenu(menuName = "Configs/Commanders/Enemies/Group Config",
                  fileName = "EnemyGroupConfig")]
 public sealed class EnemyGroupConfig : ScriptableObject {
     [SerializeField] private CharacterType _characterType;

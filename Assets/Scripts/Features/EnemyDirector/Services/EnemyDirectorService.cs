@@ -9,20 +9,34 @@ public sealed class EnemyDirectorService : IInitializable,
     private readonly BattlefieldRegistry _battlefieldRegistry;
     private readonly EnemyCommanderConfig _config;
     private readonly EnemyDirectorRuntime _runtime;
+    private readonly CommanderUpgradeEffectService _upgradeEffectService;
+    private readonly CommanderSkillEffectState _skillEffectState;
 
     public bool CanRefill => !_runtime.IsRefillPaused;
     public float ThreatLoad => _runtime.ThreatLoad;
-    public float FeedInterval => _config != null ?
+
+    public float FeedInterval {
+        get {
+            float baseInterval = _config != null ?
                                  _config.GetRefillInterval(ThreatLoad) :
                                  DEFAULT_FEED_INTERVAL;
 
+            return _upgradeEffectService
+                .GetEnemyConveyorRefillInterval(baseInterval);
+        }
+    }
+
     public EnemyDirectorService(BattlefieldRegistry battlefieldRegistry,
                                 EnemyCommanderConfig config,
-                                EnemyDirectorRuntime runtime) {
+                                EnemyDirectorRuntime runtime,
+                                CommanderUpgradeEffectService upgradeEffectService,
+                                CommanderSkillEffectState skillEffectState) {
 
         _battlefieldRegistry = battlefieldRegistry;
         _config = config;
         _runtime = runtime;
+        _upgradeEffectService = upgradeEffectService;
+        _skillEffectState = skillEffectState;
     }
 
     public void Initialize() {
@@ -59,6 +73,9 @@ public sealed class EnemyDirectorService : IInitializable,
             target.Runtime.TeamType == TeamType.Ally) {
             result *= _config.EnemyToAllyDamageMultiplier;
         }
+
+        result *= _skillEffectState.GetDamageTakenMultiplier(
+            target.Runtime.TeamType);
 
         if (target.Runtime.TeamType == TeamType.Enemy &&
             target.Config != null) {

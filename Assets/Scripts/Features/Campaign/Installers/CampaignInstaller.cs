@@ -11,6 +11,7 @@ public sealed class CampaignInstaller : MonoInstaller {
 
         Container.Bind<CampaignProgress>().AsSingle();
         Container.Bind<CommanderQuestProgress>().AsSingle();
+        Container.Bind<CommanderProgressionProgress>().AsSingle();
         Container.Bind<CampaignRuntime>().AsSingle();
         Container.Bind<GameplaySceneRequest>().AsSingle();
         Container.Bind<CampaignService>().AsSingle();

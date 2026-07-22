@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Configs/Enemy Commander/Enemy Elite Config",
+[CreateAssetMenu(menuName = "Configs/Commanders/Enemies/Elite Config",
                  fileName = "EnemyEliteConfig")]
 public sealed class EnemyEliteConfig : ScriptableObject {
     [SerializeField] private CharacterType _characterType = CharacterType.EliteCommander;

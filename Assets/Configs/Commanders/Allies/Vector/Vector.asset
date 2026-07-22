@@ -15,3 +15,7 @@ MonoBehaviour:
   _id: ally_vector
   _displayName: "\u0412\u0435\u043A\u0442\u043E\u0440"
   _icon: {fileID: 21300000, guid: a3b3845f48a2bd24aa26c4f95e9ea4e4, type: 3}
+  _quests:
+  - {fileID: 11400000, guid: 1c3c0c7d9721d344dbfc749d74307e37, type: 2}
+  - {fileID: 11400000, guid: 6669f758f382d3a45a00bba2c2bcc2e9, type: 2}
+  _progressionTree: {fileID: 11400000, guid: f7a1975cb40a42840b4a57d41822a5e8, type: 2}

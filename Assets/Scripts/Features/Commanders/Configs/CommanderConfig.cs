@@ -11,6 +11,9 @@ public abstract class CommanderConfig : ScriptableObject {
     [Header("Quests")]
     [SerializeField] private List<CommanderQuestConfig> _quests = new();
 
+    [Header("Progression")]
+    [SerializeField] private CommanderProgressionTreeConfig _progressionTree;
+
     public string Id => string.IsNullOrWhiteSpace(_id) ?
                         string.Empty : _id.Trim();
 
@@ -20,6 +23,7 @@ public abstract class CommanderConfig : ScriptableObject {
 
     public Sprite Icon => _icon;
     public IReadOnlyList<CommanderQuestConfig> Quests => _quests;
+    public CommanderProgressionTreeConfig ProgressionTree => _progressionTree;
     public abstract TeamType TeamType { get; }
 
     public bool IsValid {
@@ -38,7 +42,9 @@ public abstract class CommanderConfig : ScriptableObject {
                     !questIds.Add(quest.Id)) return false;
             }
 
-            return true;
+            return _progressionTree != null &&
+                   _progressionTree.IsValid &&
+                   _progressionTree.UsesExactly(_quests);
         }
     }
 }

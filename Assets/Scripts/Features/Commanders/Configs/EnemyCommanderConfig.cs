@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Configs/Enemy Commander/Enemy Commander Config",
+[CreateAssetMenu(menuName = "Configs/Commanders/Enemies/Commander Config",
                  fileName = "EnemyCommanderConfig")]
 public sealed class EnemyCommanderConfig : CommanderConfig {
     [Header("Queue")]
