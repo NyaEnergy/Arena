@@ -15,5 +15,6 @@ public sealed class CampaignInstaller : MonoInstaller {
         Container.Bind<CampaignRuntime>().AsSingle();
         Container.Bind<GameplaySceneRequest>().AsSingle();
         Container.Bind<CampaignService>().AsSingle();
+        Container.Bind<CampaignSceneFlowService>().AsSingle();
     }
 }

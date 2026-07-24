@@ -27,6 +27,7 @@ MonoBehaviour:
   _skillEffectType: 1
   _skillEffectPower: 0.5
   _skillEffectDuration: 6
+  _skillCooldown: 18
   _skillEffectRadius: 0
   _skillDeploymentCount: 1
   _tier: 1

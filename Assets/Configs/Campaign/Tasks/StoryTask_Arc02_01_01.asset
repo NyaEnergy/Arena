@@ -13,5 +13,11 @@ MonoBehaviour:
   m_Name: StoryTask_Arc02_01_01
   m_EditorClassIdentifier: Assembly-CSharp::StoryTaskConfig
   _id: story_task_arc_02_01_01
-  _title: 
-  _description: 
+  _title: "\u0420\u0430\u0441\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u043A\u0430\u043D\u0430\u043B"
+  _description: "\u0423\u0441\u0442\u0440\u0430\u043D\u0438\u0442\u0435 4 \u043F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A\u043E\u0432
+    \u0443 \u043F\u0435\u0440\u0435\u0445\u0432\u0430\u0447\u0435\u043D\u043D\u043E\u0433\u043E
+    \u0441\u0438\u0433\u043D\u0430\u043B\u0430."
+  _objectiveType: 0
+  _targetAmount: 4
+  _introDialogue: {fileID: 11400000, guid: 75810e9427843384a8cd39d764c646e4, type: 2}
+  _outroDialogue: {fileID: 11400000, guid: 7c02cbb4ddd3b3b4a96a2977bbe5cba0, type: 2}

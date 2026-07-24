@@ -8,6 +8,9 @@ public sealed class GameplaySceneInstaller : MonoInstaller {
     [SerializeField] private EnemyCommanderConfig _enemyCommander;
     [SerializeField] private StoryTerritoryConfig _territory;
 
+    [Header("Story Mission")]
+    [SerializeField] private StoryMissionView _storyMissionView;
+
     [InjectOptional]
     private GameplaySceneRequest _sceneRequest;
 
@@ -20,12 +23,37 @@ public sealed class GameplaySceneInstaller : MonoInstaller {
                 "enemy commander and story territory settings.");
         }
 
+        if (_storyMissionView == null ||
+            !_storyMissionView.IsValid) {
+            throw new InvalidOperationException(
+                "Gameplay scene requires a fully configured " +
+                "StoryMissionView.");
+        }
+
         Container.Bind<GameplaySceneSettings>()
                  .FromInstance(settings)
                  .AsSingle();
 
         Container.Bind<StoryTerritoryConfig>()
                  .FromInstance(settings.Territory)
+                 .AsSingle();
+
+        Container.Bind<StoryMissionView>()
+                 .FromInstance(_storyMissionView)
+                 .AsSingle();
+
+        Container.Bind<StoryTaskRuntime>().AsSingle();
+
+        Container.BindInterfacesAndSelfTo<
+                    StoryTaskService>()
+                 .AsSingle();
+
+        Container.BindInterfacesTo<
+                    StoryMissionController>()
+                 .AsSingle();
+
+        Container.BindInterfacesTo<
+                    CampaignGameplaySceneFlowController>()
                  .AsSingle();
     }
 

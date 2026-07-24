@@ -23,6 +23,7 @@ public sealed class CommanderProgressionNodeConfig : ScriptableObject {
     [SerializeField] private CommanderSkillEffectType _skillEffectType;
     [SerializeField, Min(0f)] private float _skillEffectPower = 1f;
     [SerializeField, Min(0f)] private float _skillEffectDuration;
+    [SerializeField, Min(0.1f)] private float _skillCooldown = 1f;
     [SerializeField, Min(0f)] private float _skillEffectRadius;
     [SerializeField, Min(1)] private int _skillDeploymentCount = 1;
 
@@ -46,6 +47,7 @@ public sealed class CommanderProgressionNodeConfig : ScriptableObject {
     public CommanderSkillEffectType SkillEffectType => _skillEffectType;
     public float SkillEffectPower => Mathf.Max(0f, _skillEffectPower);
     public float SkillEffectDuration => Mathf.Max(0f, _skillEffectDuration);
+    public float SkillCooldown => Mathf.Max(0.1f, _skillCooldown);
     public float SkillEffectRadius => Mathf.Max(0f, _skillEffectRadius);
     public int SkillDeploymentCount => Mathf.Max(1, _skillDeploymentCount);
 
@@ -101,6 +103,7 @@ public sealed class CommanderProgressionNodeConfig : ScriptableObject {
             _skillEffectType == CommanderSkillEffectType.None ||
             !IsFiniteNonNegative(_skillEffectPower) ||
             !IsFiniteNonNegative(_skillEffectDuration) ||
+            !IsFinitePositive(_skillCooldown) ||
             !IsFiniteNonNegative(_skillEffectRadius) ||
             _skillDeploymentCount < 1) {
             return false;
