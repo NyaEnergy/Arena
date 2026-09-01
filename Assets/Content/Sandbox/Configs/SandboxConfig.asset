@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e563e8f65c2b8d49b4dd82b1c36e12b, type: 3}
+  m_Name: SandboxConfig
+  m_EditorClassIdentifier: ConveyorWars.Application::ConveyorWars.Application.SandboxConfig
+  _ally: {fileID: 11400000, guid: a3304af77c6bfb940abba4adc138a5ed, type: 2}
+  _legionMelee: {fileID: 11400000, guid: 8d16b8be352ad904298f16da152bc6f9, type: 2}
+  _legionRanged: {fileID: 11400000, guid: c099a7dfcab957347ac0c893b001d423, type: 2}
